@@ -24,5 +24,7 @@ public:
     virtual void Render(URenderer* Renderer, const FMatrix& View, const FMatrix& Proj) {}
 
 protected:
+    virtual void RenderDetail() override;
+protected:
     UMaterial* Material = nullptr;
 };

@@ -20,26 +20,6 @@ using std::max;
 using std::min;
 using std::to_string;
 
-static inline FString GetBaseNameNoExt(const FString& Path)
-{
-	const size_t Sep = Path.find_last_of("/\\");
-	const size_t Start = (Sep == FString::npos) ? 0 : Sep + 1;
-
-	const FString Ext = ".obj";
-	size_t End = Path.size();
-	if (End >= Ext.size() && Path.compare(End - Ext.size(), Ext.size(), Ext) == 0)
-	{
-		End -= Ext.size();
-	}
-
-	if (Start <= End) 
-	{
-		return Path.substr(Start, End - Start);
-	}
-
-	return Path;
-}
-
 UPrimitiveSpawnWidget::UPrimitiveSpawnWidget()
 	: UWidget("Primitive Spawn Widget")
 	, UIManager(&UUIManager::GetInstance())

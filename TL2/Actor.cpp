@@ -196,4 +196,6 @@ void AActor::AddComponent(USceneComponent* Component)
         RootComponent = Component;
         //Component->SetupAttachment(RootComponent);
     }
+    Component->SetOwner(this);
+
 }

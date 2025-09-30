@@ -12,7 +12,10 @@ UMeshComponent::~UMeshComponent()
 {
     Material = nullptr;
 }
-
+void UMeshComponent::RenderDetail()
+{
+    UPrimitiveComponent::RenderDetail();
+}
 //void UMeshComponent::SetMeshResource(const FString& FilePath)
 //{
 //	MeshResource = FObjManager::LoadObjStaticMesh(FilePath);
