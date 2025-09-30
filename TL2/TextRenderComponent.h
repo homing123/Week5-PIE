@@ -22,7 +22,6 @@ public:
 private:
 	FString Text;
 	TMap<char, FBillboardVertexInfo> CharInfoMap;
-	FString TextureFilePath;
 
 	// TODO: UStaticMesh는 UStaticMeshComponent만 사용하도록 바꿔야 한다
 	UTextQuad* TextQuad = nullptr;

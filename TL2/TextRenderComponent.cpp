@@ -19,18 +19,16 @@ UTextRenderComponent::UTextRenderComponent()
         Indices.push_back(i * 4 + 3);
     }
 	
-
-    //if(UResourceManager::GetInstance().Get<UMaterial>())
-    auto& RM = UResourceManager::GetInstance();
-    TextQuad = RM.Get<UTextQuad>("TextBillboard");
-    if (auto* M = RM.Get<UMaterial>("TextBillboard"))
+    auto& ResourceManager = UResourceManager::GetInstance();
+    TextQuad = ResourceManager.Get<UTextQuad>("TextBillboard");
+    if (auto* Material = ResourceManager.Get<UMaterial>("TextBillboard"))
     {
-        Material = M;
+        Material = Material;
     }
     else
     {
         Material = NewObject<UMaterial>();
-        RM.Add<UMaterial>("TextBillboard", Material);
+        ResourceManager.Add<UMaterial>("TextBillboard", Material);
     }
 
     InitCharInfoMap();
