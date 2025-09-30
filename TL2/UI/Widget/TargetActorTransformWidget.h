@@ -7,6 +7,7 @@ class UUIManager;
 class UWorld;
 class AActor;
 class AGizmoActor;
+class USceneComponent;
 
 class UTargetActorTransformWidget
 	: public UWidget
@@ -17,10 +18,6 @@ public:
 	void Initialize() override;
 	void Update() override;
 	void RenderWidget() override;
-	void PostProcess() override;
-
-	void UpdateTransformFromActor();
-	void ApplyTransformToActor() const;
 
 	// Special Member Function
 	UTargetActorTransformWidget();
@@ -32,6 +29,7 @@ public:
 private:
 	UUIManager* UIManager = nullptr;
 	AActor* SelectedActor = nullptr;
+	USceneComponent* SelectedComponent = nullptr;
 	FString CachedActorName; // 액터 이름 캐시 (안전한 출력을 위해)
 
 	// Transform UI 상태
@@ -52,7 +50,4 @@ private:
 	// 월드 정보 (옵션)
 	uint32 WorldActorCount = 0;
 	
-	// 헬퍼 메서드
-	AActor* GetCurrentSelectedActor() const;
-	void ResetChangeFlags();
 };

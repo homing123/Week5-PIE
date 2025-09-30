@@ -20,19 +20,16 @@ public:
     /** === 선택 관리 === */
     void SelectActor(AActor* Actor);
     void DeselectActor(AActor* Actor);
+    void SelectComponent(USceneComponent* Component);
+    void DeselectComponent(USceneComponent* Component);;
+
     void ClearSelection();
-    
-    bool IsActorSelected(AActor* Actor) const;
-    
+        
     /** === 선택된 액터 접근 === */
-    AActor* GetSelectedActor() const; // 단일 선택용
-    const TArray<AActor*>& GetSelectedActors() const { return SelectedActors; }
+    AActor* GetSelectedActor() const { return SelectedActor; }
+    USceneComponent* GetSelectedComponent() const { return SelectedComponent; }
     
-    int32 GetSelectionCount() const { return SelectedActors.Num(); }
-    bool HasSelection() const { return SelectedActors.Num() > 0; }
-    
-    /** === 삭제된 액터 정리 === */
-    void CleanupInvalidActors(); // null이나 삭제된 액터 제거
+    bool HasSelection() const { return SelectedActor != nullptr; }
 
 public:
     USelectionManager();
@@ -44,5 +41,6 @@ protected:
     USelectionManager& operator=(const USelectionManager&) = delete;
     
     /** === 선택된 액터들 === */
-    TArray<AActor*> SelectedActors;
+    AActor* SelectedActor;
+    USceneComponent* SelectedComponent;
 };

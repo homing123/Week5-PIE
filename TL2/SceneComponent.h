@@ -77,6 +77,13 @@ public:
     const TArray<USceneComponent*>& GetAttachChildren() const { return AttachChildren; }
     UWorld* GetWorld() { return AttachParent->GetWorld(); }
 
+
+
+protected:
+    virtual void RenderDetail() override;
+
+    void UpdateRelativeTransform();
+
 protected:
     FVector RelativeLocation{ 0,0,0 };
     FQuat   RelativeRotation;
@@ -90,5 +97,6 @@ protected:
     // 로컬(부모 기준) 트랜스폼
     FTransform RelativeTransform;
 
-    void UpdateRelativeTransform();
+private:
+    bool bUniformScale = true;
 };

@@ -112,7 +112,7 @@ static void DebugRTTI_UObject(UObject* Obj, const char* Title)
 
 void UWorld::Initialize()
 {
-	FObjManager::Preload();
+	//FObjManager::Preload();
 
 	// 새 씬 생성
 	CreateNewScene();
@@ -372,7 +372,7 @@ void UWorld::RenderViewports(ACameraActor* Camera, FViewport* Viewport)
 				}
 			}
 
-			bool bIsSelected = SelectionManager.IsActorSelected(Actor);
+			bool bIsSelected = Actor == SelectionManager.GetSelectedActor();
 			/*if (bIsSelected)
 				Renderer->OMSetDepthStencilState(EComparisonFunc::Always);*/ // 이렇게 하면, 같은 메시에 속한 정점끼리도 뒤에 있는게 앞에 그려지는 경우가 발생해, 이상하게 렌더링 됨.
 
@@ -493,12 +493,6 @@ bool UWorld::DestroyActor(AActor* Actor)
 	// SelectionManager에서 선택 해제 (메모리 해제 전에 하자)
 	USelectionManager::GetInstance().DeselectActor(Actor);
 
-	// UIManager에서 픽된 액터 정리
-	if (UIManager.GetPickedActor() == Actor)
-	{
-		UIManager.ResetPickedActor();
-	}
-
 	// 배열에서 제거 시도
 	auto it = std::find(Actors.begin(), Actors.end(), Actor);
 	if (it != Actors.end())
@@ -507,9 +501,6 @@ bool UWorld::DestroyActor(AActor* Actor)
 
 		// 메모리 해제
 		ObjectFactory::DeleteObject(Actor);
-
-		// 삭제된 액터 정리
-		USelectionManager::GetInstance().CleanupInvalidActors();
 
 		return true; // 성공적으로 삭제
 	}
@@ -550,7 +541,6 @@ void UWorld::CreateNewScene()
 {
 	// Safety: clear interactions that may hold stale pointers
 	SelectionManager.ClearSelection();
-	UIManager.ResetPickedActor();
 
 	for (AActor* Actor : Actors)
 	{

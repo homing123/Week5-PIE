@@ -2,6 +2,7 @@
 #include "SceneComponent.h"
 #include <algorithm>
 #include "ObjectFactory.h"
+#include "ImGui/imgui.h"
 
 USceneComponent::USceneComponent()
     : RelativeLocation(0, 0, 0)
@@ -255,4 +256,44 @@ void USceneComponent::DetachFromParent(bool bKeepWorld)
 void USceneComponent::UpdateRelativeTransform()
 {
     RelativeTransform = FTransform(RelativeLocation, RelativeRotation, RelativeScale);
+}
+
+
+
+
+void USceneComponent::RenderDetail()
+{
+    UActorComponent::RenderDetail();
+
+    // Location 편집
+    if (ImGui::DragFloat3("Location", &RelativeLocation.X, 0.1f))
+    {
+        SetRelativeLocation(RelativeLocation);
+    }
+    	
+    // Rotation 편집 (Euler angles)
+    FVector Euler = RelativeRotation.ToEuler();
+    if (ImGui::DragFloat3("Rotation", &Euler.X, 0.5f))
+    {
+        SetRelativeRotation(FQuat::MakeFromEuler(Euler));
+    }
+    	
+    // Scale 편집
+    ImGui::Checkbox("Uniform Scale", &bUniformScale);
+    	
+    if (bUniformScale)
+    {
+    	float UniformScale = RelativeScale.X;
+    	if (ImGui::DragFloat("Scale", &UniformScale, 0.01f, 0.01f, 10.0f))
+    	{
+            SetRelativeScale(UniformScale);
+    	}
+    }
+    else
+    {
+    	if (ImGui::DragFloat3("Scale", &RelativeScale.X, 0.01f, 0.01f, 10.0f))
+    	{
+            SetRelativeScale(RelativeScale);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "ActorComponent.h"
+#include "ImGui/imgui.h"
 
 UActorComponent::UActorComponent()
     : Owner(nullptr), bIsActive(true), bCanEverTick(false)
@@ -35,4 +36,19 @@ void UActorComponent::EndPlay()
 {
     // 파괴 시
     // 필요하다면 Override
+}
+void UActorComponent::RenderDetailCommon()
+{
+   
+    if (ImGui::TreeNode(GetClass()->Name))
+    {
+        RenderDetail();
+        ImGui::TreePop();
+    }
+   
+}
+
+void UActorComponent::RenderDetail()
+{
+
 }

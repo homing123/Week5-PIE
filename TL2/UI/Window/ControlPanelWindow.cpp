@@ -6,7 +6,7 @@
 #include "../Widget/ActorTerminationWidget.h"
 #include "../Widget/PrimitiveSpawnWidget.h"
 #include "../Widget/SceneIOWidget.h"
-
+#include "../Widget/SceneManagerWidget.h"
 //// UE_LOG 대체 매크로
 //#define UE_LOG(fmt, ...)
 
@@ -37,6 +37,10 @@ UControlPanelWindow::UControlPanelWindow()
 	UActorTerminationWidget* ActorTerminationWidget = NewObject<UActorTerminationWidget>();
 	ActorTerminationWidget->Initialize();
 	AddWidget(ActorTerminationWidget);
+
+	USceneManagerWidget* SceneManagerWidget = NewObject<USceneManagerWidget>();
+	SceneManagerWidget->Initialize();
+	AddWidget(SceneManagerWidget);
 
 	UPrimitiveSpawnWidget* PrimitiveSpawnWidget = NewObject<UPrimitiveSpawnWidget>();
 	PrimitiveSpawnWidget->Initialize();

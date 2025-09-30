@@ -202,7 +202,6 @@ void FViewportClient::MouseButtonDown(FViewport* Viewport, int32 X, int32 Y, int
         if (PickedActor)
         {
             USelectionManager::GetInstance().SelectActor(PickedActor);
-            UUIManager::GetInstance().SetPickedActor(PickedActor);
             if (World->GetGizmoActor())
             {
                 World->GetGizmoActor()->SetTargetActor(PickedActor);
@@ -211,7 +210,6 @@ void FViewportClient::MouseButtonDown(FViewport* Viewport, int32 X, int32 Y, int
         }
         else
         {
-            UUIManager::GetInstance().ResetPickedActor();
             // Clear selection if nothing was picked
             USelectionManager::GetInstance().ClearSelection();
         }

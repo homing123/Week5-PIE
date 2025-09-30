@@ -37,7 +37,12 @@ public:
     }
     AActor* GetOwner() const { return Owner; }
 
+    void RenderDetailCommon();
+
 protected:
+    virtual void RenderDetail();
+protected:
+
     AActor* Owner = nullptr;  // 자신을 보유한 액터
     bool bIsActive = true;    // 활성 상태
     bool bCanEverTick = false; // 매 프레임 Tick 가능 여부
