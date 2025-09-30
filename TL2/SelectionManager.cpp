@@ -17,6 +17,7 @@ void USelectionManager::SelectActor(AActor* Actor)
     if (!Actor) return;
     
     SelectedActor = Actor;
+    SelectedComponent = nullptr;
 }
 void USelectionManager::SelectComponent(USceneComponent* Component)
 {

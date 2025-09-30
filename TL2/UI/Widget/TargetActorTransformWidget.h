@@ -31,17 +31,6 @@ private:
 	AActor* SelectedActor = nullptr;
 	USceneComponent* SelectedComponent = nullptr;
 	FString CachedActorName; // 액터 이름 캐시 (안전한 출력을 위해)
-
-	// Transform UI 상태
-	FVector EditLocation = {0.0f, 0.0f, 0.0f};
-	FVector EditRotation = {0.0f, 0.0f, 0.0f};
-	FVector EditScale = {1.0f, 1.0f, 1.0f};
-	
-	// UI 변경 플래그
-	bool bScaleChanged = false;
-	bool bRotationChanged = false;
-	bool bPositionChanged = false;
-	bool bUniformScale = false;
 	
 	// 기즈모 설정
 	EGizmoSpace CurrentGizmoSpace = EGizmoSpace::World;

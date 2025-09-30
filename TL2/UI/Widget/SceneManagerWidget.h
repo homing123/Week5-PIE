@@ -30,11 +30,13 @@ public:
     ~USceneManagerWidget() override;
 
 private:
-    void RenderComponent(const USceneComponent* Component);
+    void RenderComponent(USceneComponent* Component);
 
 private:
     UUIManager* UIManager = nullptr;
     USelectionManager* SelectionManager = nullptr;
+    AActor* SelectedActor = nullptr;
+    USceneComponent* SelectedComponent = nullptr;
 
     // Helper Methods
     UWorld* GetCurrentWorld() const;

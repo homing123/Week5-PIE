@@ -60,11 +60,21 @@ void USceneManagerWidget::RenderWidget()
     // Actor tree view
     ImGui::BeginChild("ActorTreeView", ImVec2(0, 240), true);
     
-    
+    SelectedActor = SelectionManager->GetSelectedActor();
+    SelectedComponent = SelectionManager->GetSelectedComponent();
     const TArray<AActor*>& Actors = World->GetActors();
     for (AActor* Actor : Actors)
     {
-        RenderComponent(Actor->GetRootComponent());
+        if (ImGui::TreeNodeEx(Actor->GetName().ToString().c_str(), 
+            SelectedComponent == nullptr && SelectedActor == Actor ? ImGuiTreeNodeFlags_Selected : 0))
+        {
+            if (ImGui::IsItemClicked())
+            {
+                SelectionManager->SelectActor(Actor);
+            }
+            RenderComponent(Actor->GetRootComponent());
+            ImGui::TreePop();
+        }
     }
    
     ImGui::EndChild();
@@ -83,14 +93,21 @@ UWorld* USceneManagerWidget::GetCurrentWorld() const
 
 
 
-void USceneManagerWidget::RenderComponent(const USceneComponent* Component)
+void USceneManagerWidget::RenderComponent(USceneComponent* Component)
 {
     const TArray<USceneComponent*>& ChildComponents = Component->GetAttachChildren();
     if (ChildComponents.size() > 0)
-    {
-        if (ImGui::TreeNode(Component->GetName().c_str()))
+    { 
+        if (ImGui::TreeNodeEx(Component->GetName().c_str(),
+            SelectedComponent != nullptr && SelectedComponent == Component ? ImGuiTreeNodeFlags_Selected : 0))
         {
-            for (const USceneComponent* Child : ChildComponents)
+            if (ImGui::IsItemClicked())
+            {
+                SelectionManager->SelectActor(Component->GetOwner());
+                SelectionManager->SelectComponent(Component);
+            }
+            
+            for (USceneComponent* Child : ChildComponents)
             {
                 RenderComponent(Child);
             }
@@ -99,6 +116,10 @@ void USceneManagerWidget::RenderComponent(const USceneComponent* Component)
     }
     else
     {
-        ImGui::Selectable(Component->GetName().c_str());
+        if (ImGui::Selectable(Component->GetName().c_str(),  SelectedComponent != nullptr && SelectedComponent == Component))
+        {
+            SelectionManager->SelectActor(Component->GetOwner());
+            SelectionManager->SelectComponent(Component);
+        }
     }
 }
