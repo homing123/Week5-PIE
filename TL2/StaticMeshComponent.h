@@ -25,7 +25,7 @@ protected:
     virtual void RenderDetail() override;
 
 public:
-    void Render(URenderer* Renderer, const FMatrix& View, const FMatrix& Proj) override;
+    virtual void Render(URenderer* Renderer, const FMatrix& View, const FMatrix& Proj) override;
 
     void SetStaticMesh(const FString& PathFileName);
     UStaticMesh* GetStaticMesh() const { return StaticMesh; }

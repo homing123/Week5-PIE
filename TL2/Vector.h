@@ -455,7 +455,6 @@ struct alignas(16) FMatrix
     {
         return FVector(M[2][0], M[2][1], M[2][2]).GetNormalized();
     }
-
     // Affine 역행렬 (마지막 행 = [0,0,0,1] 가정)
     FMatrix InverseAffine() const
     {
@@ -516,7 +515,14 @@ struct alignas(16) FMatrix
         rot.M[3][3] = 1;
         return rot;
     }
-
+    static FMatrix Translation(const FVector& T)
+    {
+        FMatrix TMat = FMatrix::Identity();
+        TMat.M[3][0] = T.X;
+        TMat.M[3][1] = T.Y;
+        TMat.M[3][2] = T.Z;
+        return TMat;
+    }
     // View/Proj (L H)
     static FMatrix LookAtLH(const FVector& Eye, const FVector& At, const FVector& Up);
     static FMatrix PerspectiveFovLH(float FovY, float Aspect, float Zn, float Zf);
@@ -539,9 +545,9 @@ struct alignas(16) FMatrix
 inline FVector operator*(const FVector& V, const FMatrix& S)
 {
     FVector Result;
-    Result.X = V.X * S.M[0][0] + V.Y * S.M[1][0] + V.Z * S.M[2][0];
-    Result.Y = V.X * S.M[0][1] + V.Y * S.M[1][1] + V.Z * S.M[2][1];
-    Result.Z = V.X * S.M[0][2] + V.Y * S.M[1][2] + V.Z * S.M[2][2];
+    Result.X = V.X * S.M[0][0] + V.Y * S.M[1][0] + V.Z * S.M[2][0] + S.M[3][0];
+    Result.Y = V.X * S.M[0][1] + V.Y * S.M[1][1] + V.Z * S.M[2][1] + S.M[3][1];
+    Result.Z = V.X * S.M[0][2] + V.Y * S.M[1][2] + V.Z * S.M[2][2] + S.M[3][2];
     return Result;
 }
 

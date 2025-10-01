@@ -33,9 +33,9 @@ public:
 
     FMatrix GetWorldMatrix() const;
 
-    FVector GetActorForward() const { return GetActorRotation().RotateVector(FVector(1, 0, 0)); }
-    FVector GetActorRight()   const { return GetActorRotation().RotateVector(FVector(0, 1, 0)); }
-    FVector GetActorUp()      const { return GetActorRotation().RotateVector(FVector(0, 0, 1)); }
+    FVector GetActorForward() { return RootComponent->GetForward(); }
+    FVector GetActorRight()   { return RootComponent->GetRight(); }
+    FVector GetActorUp()      { return RootComponent->GetUp(); }
 
     void SetWorld(UWorld* InWorld) { World = InWorld; }
     UWorld* GetWorld() const { return World; }

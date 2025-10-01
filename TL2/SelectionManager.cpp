@@ -47,6 +47,24 @@ void USelectionManager::DeselectComponent(USceneComponent* Component)
         SelectedComponent = nullptr;
     }
 }
+USceneComponent* USelectionManager::GetSelectedOnlyComponent() const
+{
+    if (SelectedActor == nullptr)
+    {
+        return nullptr;
+    }
+    else
+    {
+        if (SelectedComponent == nullptr)
+        {
+            return SelectedActor->GetRootComponent();
+        }
+        else
+        {
+            return SelectedComponent;
+        }
+    }
+}
 
 
 void USelectionManager::ClearSelection()
