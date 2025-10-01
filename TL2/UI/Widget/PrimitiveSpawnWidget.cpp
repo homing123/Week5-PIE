@@ -78,7 +78,7 @@ float UPrimitiveSpawnWidget::GenerateRandomScale() const
 FQuat UPrimitiveSpawnWidget::GenerateRandomRotation() const
 {
 	if (!bRandomRotation)
-		return FQuat::Identity();
+		return FQuat::Identity;
 	
 	// 랜덤 오일러 각도 생성 (도 단위)
 	float RandomPitch = (static_cast<float>(rand()) / RAND_MAX) * 360.0f - 180.0f;

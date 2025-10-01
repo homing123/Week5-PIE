@@ -27,13 +27,13 @@ public:
     // Relative Transform API
     // ──────────────────────────────
     void SetRelativeLocation(const FVector& NewLocation);
-    const FVector& GetRelativeLocation() const;
+    FVector GetRelativeLocation() const;
 
     void SetRelativeRotation(const FQuat& NewRotation);
-    const FQuat& GetRelativeRotation() const;
+    FQuat GetRelativeRotation() const;
 
     void SetRelativeScale(const FVector& NewScale);
-    const FVector& GetRelativeScale() const;
+    FVector GetRelativeScale() const;
 
     void SetWorldLocation(const FVector& WorldLocation);
     void SetRelativeTransform(const FTransform& InRelativeTransform);

@@ -39,21 +39,21 @@ void USceneComponent::SetRelativeLocation(const FVector& NewLocation){
     RelativeTransform.Translation = NewLocation;
     TransformDirty();
 }
-const FVector& USceneComponent::GetRelativeLocation() const { return  RelativeTransform.Translation; }
+FVector USceneComponent::GetRelativeLocation() const { return  RelativeTransform.Translation; }
 
 void USceneComponent::SetRelativeRotation(const FQuat& NewRotation)
 {
     RelativeTransform.Rotation = NewRotation;
     TransformDirty();
 }
-const FQuat& USceneComponent::GetRelativeRotation() const { return  RelativeTransform.Rotation; }
+FQuat USceneComponent::GetRelativeRotation() const { return  RelativeTransform.Rotation; }
 
 void USceneComponent::SetRelativeScale(const FVector& NewScale)
 {
     RelativeTransform.Scale3D = NewScale;
     TransformDirty();
 }
-const FVector& USceneComponent::GetRelativeScale() const { return  RelativeTransform.Scale3D; }
+FVector USceneComponent::GetRelativeScale() const { return  RelativeTransform.Scale3D; }
 
 
 void USceneComponent::SetWorldLocation(const FVector& WorldLocation)
@@ -269,7 +269,7 @@ void USceneComponent::RenderDetail()
         }
 
         // Rotation 편집 (Euler angles)
-        FVector Euler = RelativeTransform.Rotation.ToEuler();
+        FVector Euler = RelativeTransform.Rotation.ToEulerDegree();
         if (ImGui::DragFloat3("Rotation", &Euler.X, 0.5f))
         {
             SetRelativeRotation(FQuat::MakeFromEuler(Euler));

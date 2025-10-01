@@ -22,7 +22,7 @@ void UPrimitiveComponent::Serialize(bool bIsLoading, FPrimitiveData& InOut)
     {
         // 컴포넌트 월드 트랜스폼 -> FPrimitiveData
         InOut.Location = GetRelativeLocation();
-        InOut.Rotation = GetRelativeRotation().ToEuler();
+        InOut.Rotation = GetRelativeRotation().ToEulerDegree();
         InOut.Scale = GetRelativeScale();
     }
 }

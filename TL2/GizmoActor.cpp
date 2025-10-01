@@ -507,23 +507,23 @@ worldPerPixel *= zoomFactor;*/
 			case 1: // X축 회전
 			{
 				// 마우스 X → 카메라 Up 축 기반
-				FQuat RotByX = MakeQuatFromAxisAngle(FVector(-1, 0, 0), DeltaAngleX);
+				FQuat RotByX = FQuat(FVector(-1, 0, 0), DeltaAngleX);
 				// 마우스 Y → 카메라 Right 축 기반
-				FQuat RotByY = MakeQuatFromAxisAngle(FVector(-1, 0, 0), DeltaAngleY);
+				FQuat RotByY = FQuat(FVector(-1, 0, 0), DeltaAngleY);
 				DeltaQuat = RotByX * RotByY;
 				break;
 			}
 			case 2: // Y축 회전
 			{
-				FQuat RotByX = MakeQuatFromAxisAngle(FVector(0, -1, 0), DeltaAngleX);
-				FQuat RotByY = MakeQuatFromAxisAngle(FVector(0, -1, 0), DeltaAngleY);
+				FQuat RotByX = FQuat(FVector(0, -1, 0), DeltaAngleX);
+				FQuat RotByY = FQuat(FVector(0, -1, 0), DeltaAngleY);
 				DeltaQuat = RotByX * RotByY;
 				break;
 			}
 			case 3: // Z축 회전
 			{
-				FQuat RotByX = MakeQuatFromAxisAngle(FVector(0, 0, -1), DeltaAngleX);
-				FQuat RotByY = MakeQuatFromAxisAngle(FVector(0, 0, -1), DeltaAngleY);
+				FQuat RotByX = FQuat(FVector(0, 0, -1), DeltaAngleX);
+				FQuat RotByY = FQuat(FVector(0, 0, -1), DeltaAngleY);
 				DeltaQuat = RotByX * RotByY;
 				break;
 			}
@@ -551,23 +551,23 @@ worldPerPixel *= zoomFactor;*/
 			case 1: // X축 회전
 			{
 				// 마우스 X → 카메라 Up 축 기반
-				FQuat RotByX = MakeQuatFromAxisAngle(RotationAxis, DeltaAngleX);
+				FQuat RotByX = FQuat(RotationAxis, DeltaAngleX);
 				// 마우스 Y → 카메라 Right 축 기반
-				FQuat RotByY = MakeQuatFromAxisAngle(RotationAxis, DeltaAngleY);
+				FQuat RotByY = FQuat(RotationAxis, DeltaAngleY);
 				DeltaQuat = RotByX * RotByY;
 				break;
 			}
 			case 2: // Y축 회전
 			{
-				FQuat RotByX = MakeQuatFromAxisAngle(RotationAxis, DeltaAngleX);
-				FQuat RotByY = MakeQuatFromAxisAngle(RotationAxis, DeltaAngleY);
+				FQuat RotByX = FQuat(RotationAxis, DeltaAngleX);
+				FQuat RotByY = FQuat(RotationAxis, DeltaAngleY);
 				DeltaQuat = RotByX * RotByY;
 				break;
 			}
 			case 3: // Z축 회전
 			{
-				FQuat RotByX = MakeQuatFromAxisAngle(RotationAxis, DeltaAngleX);
-				FQuat RotByY = MakeQuatFromAxisAngle(RotationAxis, DeltaAngleY);
+				FQuat RotByX = FQuat(RotationAxis, DeltaAngleX);
+				FQuat RotByY = FQuat(RotationAxis, DeltaAngleY);
 				DeltaQuat = RotByX * RotByY;
 				break;
 			}
