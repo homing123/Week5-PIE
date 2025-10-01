@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "TextRenderComponent.h"
+#include "BillboardComponent.h"
 #include "Shader.h"
 #include "StaticMesh.h"
 #include "TextQuad.h"
@@ -201,6 +202,7 @@ void URenderer::DrawIndexedPrimitiveComponent(UStaticMesh* InMesh, D3D11_PRIMITI
     }
 }
 
+// jft
 void URenderer::DrawIndexedPrimitiveComponent(UTextRenderComponent* Comp, D3D11_PRIMITIVE_TOPOLOGY InTopology)
 {
     URenderingStatsCollector& StatsCollector = URenderingStatsCollector::GetInstance();
@@ -251,6 +253,62 @@ void URenderer::DrawIndexedPrimitiveComponent(UTextRenderComponent* Comp, D3D11_
     RHIDevice->GetDeviceContext()->PSSetShaderResources(0, 1, &TextureSRV);
     RHIDevice->GetDeviceContext()->IASetPrimitiveTopology(InTopology);
     RHIDevice->GetDeviceContext()->DrawIndexed(Comp->GetStaticMesh()->GetIndexCount(), 0, 0);
+    StatsCollector.IncrementDrawCalls();
+}
+
+void URenderer::DrawIndexedPrimitiveComponent(UBillboardComponent* Comp, D3D11_PRIMITIVE_TOPOLOGY InTopology)
+{
+    URenderingStatsCollector& StatsCollector = URenderingStatsCollector::GetInstance();
+
+    UStaticMesh* Mesh = Comp->GetStaticMesh();
+    if (!Mesh) return;
+
+    // QuadMesh는 PositionColorTexturNormal 레이아웃을 사용하므로 FVertexDynamic 사이즈를 사용합니다.
+    UINT Stride = sizeof(FVertexDynamic);
+    ID3D11Buffer* VertexBuff = Mesh->GetVertexBuffer();
+    ID3D11Buffer* IndexBuff = Mesh->GetIndexBuffer();
+
+    UMaterial* CompMaterial = Comp->GetMaterial();
+    if (!CompMaterial) return;
+
+    // --- 상태 변경 추적 (최적화를 위해) ---
+    if (LastMaterial != CompMaterial)
+    {
+        StatsCollector.IncrementMaterialChanges();
+        LastMaterial = CompMaterial;
+    }
+
+    UShader* CompShader = CompMaterial->GetShader();
+    if (LastShader != CompShader)
+    {
+        StatsCollector.IncrementShaderChanges();
+        LastShader = CompShader;
+    }
+
+    RHIDevice->GetDeviceContext()->IASetInputLayout(CompShader->GetInputLayout());
+
+    // --- GPU에 버퍼 설정 ---
+    UINT offset = 0;
+    RHIDevice->GetDeviceContext()->IASetVertexBuffers(0, 1, &VertexBuff, &Stride, &offset);
+    RHIDevice->GetDeviceContext()->IASetIndexBuffer(IndexBuff, DXGI_FORMAT_R32_UINT, 0);
+
+    // --- 텍스처 설정 ---
+    UTexture* CompTexture = CompMaterial->GetTexture();
+    if (CompTexture)
+    {
+        if (LastTexture != CompTexture)
+        {
+            StatsCollector.IncrementTextureChanges();
+            LastTexture = CompTexture;
+        }
+        ID3D11ShaderResourceView* TextureSRV = CompTexture->GetShaderResourceView();
+        RHIDevice->PSSetDefaultSampler(0);
+        RHIDevice->GetDeviceContext()->PSSetShaderResources(0, 1, &TextureSRV);
+    }
+
+    // --- 그리기 ---
+    RHIDevice->GetDeviceContext()->IASetPrimitiveTopology(InTopology);
+    RHIDevice->GetDeviceContext()->DrawIndexed(Mesh->GetIndexCount(), 0, 0);
     StatsCollector.IncrementDrawCalls();
 }
 

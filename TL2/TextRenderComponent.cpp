@@ -148,8 +148,8 @@ void UTextRenderComponent::Render(URenderer* Renderer, const FMatrix& View, cons
         FVector CamUp = CameraActor->GetActorUp();
 
 
-        FVector cameraPosition = CameraActor->GetActorLocation();
-        Renderer->UpdateBillboardConstantBuffers(Owner->GetActorLocation() + FVector(0.f, 0.f, 1.f) * Owner->GetActorScale().Z, View, Proj, CamRight, CamUp);
+        FVector CameraPosition = CameraActor->GetActorLocation();
+        // Renderer->UpdateBillboardConstantBuffers(Owner->GetActorLocation() + FVector(0.f, 0.f, 1.f) * Owner->GetActorScale().Z, View, Proj, CamRight, CamUp);
 
 
         Renderer->PrepareShader(Material->GetShader());

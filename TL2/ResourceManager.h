@@ -14,6 +14,8 @@ class UStaticMesh;
 class UResourceBase;
 class UStaticMesh;
 class UMaterial;
+// jft
+class UTexture;
 
 struct FShaderDesc
 {
@@ -52,6 +54,10 @@ public:
     void CreateBoxWireframeMesh(const FVector& Min, const FVector& Max, const FString& FilePath);
     //FMeshData* CreateWireBoxMesh(const FVector& Min, const FVector& Max, const FString& FilePath);
    // void CreateBoxMesh(const FVector& Min, const FVector& Max, const FString& FilePath);
+    // jft
+    void GetTexture(UTexture*& InTexture, const FString& InFilePath);
+    UStaticMesh* GetQuadMesh();
+
     void CreateDefaultShader();
     void InitShaderILMap();
     void InitTexToShaderMap();

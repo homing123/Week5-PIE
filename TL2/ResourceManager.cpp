@@ -373,6 +373,59 @@ void UResourceManager::CreateBoxWireframeMesh(const FVector& Min, const FVector&
     UMeshLoader::GetInstance().AddMeshData(FilePath, MeshData);
 }
 
+// jft
+void UResourceManager::GetTexture(UTexture*& InTexture, const FString& InFilePath)
+{
+    InTexture->Load(InFilePath, Device);
+}
+
+UStaticMesh* UResourceManager::GetQuadMesh()
+{
+    const FString QuadMeshName = "DefaultQuad";
+    if (auto* QuadMesh = Get<UStaticMesh>(QuadMeshName))
+    {
+        return QuadMesh;
+    }
+
+    // 없다면 StaticMesh 새로 생성
+    TArray<FVector> UVPostion;
+    UVPostion.push_back(FVector(-0.5f, 0.5f, 0.f));  // Top-left
+    UVPostion.push_back(FVector(0.5f, 0.5f, 0.f));   // Top-right
+    UVPostion.push_back(FVector(-0.5f, -0.5f, 0.f)); // Bottom-left
+    UVPostion.push_back(FVector(0.5f, -0.5f, 0.f));  // Bottom-right
+
+    TArray<FVector4> Colors;
+    Colors.insert(Colors.end(), 4, FVector4(1, 1, 1, 1)); // 모든 정점을 흰색으로
+
+    TArray<FVector2D> UVs;
+    UVs.push_back(FVector2D(0, 0)); // Top-left
+    UVs.push_back(FVector2D(1, 0)); // Top-right
+    UVs.push_back(FVector2D(0, 1)); // Bottom-left
+    UVs.push_back(FVector2D(1, 1)); // Bottom-right
+
+    TArray<FVector> Normals;
+    Normals.insert(Normals.end(), 4, FVector(0, 0, -1)); // Billboard : 카메라를 바라보는 방향
+
+    TArray<uint32> indices = { 0, 1, 2, 1, 3, 2 }; // 사각형을 만드는 삼각형 2개
+
+    FMeshData* MeshData = new FMeshData();
+    MeshData->Vertices = UVPostion;
+    MeshData->Color = Colors;
+    MeshData->UV = UVs;
+    MeshData->Normal = Normals;
+    MeshData->Indices = indices;
+
+    // UStaticMesh 객체를 생성, MeshData 로드
+    UStaticMesh* NewQuadMesh = NewObject<UStaticMesh>();
+    NewQuadMesh->Load(MeshData, Device, EVertexLayoutType::PositionColorTexturNormal);
+
+    // 메시 재사용을 위해 적재
+    Add<UStaticMesh>(QuadMeshName, NewQuadMesh);
+    UMeshLoader::GetInstance().AddMeshData(QuadMeshName, MeshData);
+
+    return NewQuadMesh;
+}
+
 void UResourceManager::CreateDefaultShader()
 {
     // 템플릿 Load 멤버함수 호출해서 Resources[UShader의 typeIndex][shader 파일 이름]에 UShader 포인터 할당

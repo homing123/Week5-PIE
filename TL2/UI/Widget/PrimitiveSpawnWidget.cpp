@@ -11,7 +11,8 @@
 #include <ctime>
 #include <string>
 #include "ObjectIterator.h"
-
+//jft
+#include "BillboardComponent.h"
 //// UE_LOG 대체 매크로
 //#define UE_LOG(fmt, ...)
 
@@ -286,6 +287,11 @@ void UPrimitiveSpawnWidget::SpawnActors() const
         FTransform SpawnTransform(SpawnLocation, SpawnRotation, SpawnScaleVec);
 
         AStaticMeshActor* NewActor = World->SpawnActor<AStaticMeshActor>(SpawnTransform);
+        // jft
+        UBillboardComponent* MyBillboard = NewObject<UBillboardComponent>();
+        NewActor->AddComponent(MyBillboard);
+        MyBillboard->SetupAttachment(NewActor->GetRootComponent());
+        MyBillboard->SetTexture("Pawn_64x.png");
 
         if (NewActor)
         {
@@ -294,7 +300,7 @@ void UPrimitiveSpawnWidget::SpawnActors() const
             const bool bHasResourceSelection =
                 (SelectedMeshIndex >= 0) &&
                 (SelectedMeshIndex < static_cast<int32>(CachedMeshFilePaths.size()));
-
+            
             if (bHasResourceSelection)
             {
                 MeshPath = CachedMeshFilePaths[SelectedMeshIndex];

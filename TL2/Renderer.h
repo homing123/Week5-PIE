@@ -4,6 +4,7 @@
 
 class UStaticMeshComponent;
 class UTextRenderComponent;
+class UBillboardComponent;
 class UMeshComponent;
 class URHIDevice;
 class UShader;
@@ -38,11 +39,13 @@ public:
 
     void UpdateColorBuffer(const FVector4& Color);
 
-    void DrawIndexedPrimitiveComponent(UStaticMesh* InMesh, D3D11_PRIMITIVE_TOPOLOGY InTopology, const TArray<FMaterialSlot>& InComponentMaterialSlots);
-
     void UpdateUVScroll(const FVector2D& Speed, float TimeSec);
 
+    void DrawIndexedPrimitiveComponent(UStaticMesh* InMesh, D3D11_PRIMITIVE_TOPOLOGY InTopology, const TArray<FMaterialSlot>& InComponentMaterialSlots);
+
     void DrawIndexedPrimitiveComponent(UTextRenderComponent* Comp, D3D11_PRIMITIVE_TOPOLOGY InTopology);
+    //jft
+    void DrawIndexedPrimitiveComponent(UBillboardComponent* Comp, D3D11_PRIMITIVE_TOPOLOGY InTopology);
 
     void SetViewModeType(EViewModeIndex ViewModeIndex);
     // Batch Line Rendering System
