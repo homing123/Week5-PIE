@@ -23,8 +23,6 @@ FMatrix UCameraComponent::GetViewMatrix()
     // Robust path: View = inverse(world) under row-vector convention.
     // Use full transform matrix (translation in last row) and invert affine part.
     const FMatrix World = GetWorldMatrix();
-    World.Log();
-
     return World.InverseAffine() * FMatrix::ViewAxis;
 }
 
@@ -84,15 +82,34 @@ FMatrix UCameraComponent::GetProjectionMatrix(float ViewportAspectRatio, FViewpo
 }
 FVector UCameraComponent::GetForward() const
 {
+    if (AttachParent)
+    {
+        const FMatrix& ParentWorldMatrix = AttachParent->GetWorldMatrix();
+        FMatrix ParentWorldAndRot = RelativeTransform.Rotation.ToMatrix() * ParentWorldMatrix;
+        return ParentWorldAndRot.GetForward();
+
+    }
     return RelativeTransform.Rotation.RotateVector(FVector(1, 0, 0)).GetNormalized();
 }
 
 FVector UCameraComponent::GetRight() const
 {
+    if (AttachParent)
+    {
+        const FMatrix& ParentWorldMatrix = AttachParent->GetWorldMatrix();
+        FMatrix ParentWorldAndRot = RelativeTransform.Rotation.ToMatrix() * ParentWorldMatrix;
+        return ParentWorldAndRot.GetRight();
+    }
     return RelativeTransform.Rotation.RotateVector(FVector(0, 1, 0)).GetNormalized();
 }
 
 FVector UCameraComponent::GetUp() const
 {
+    if (AttachParent)
+    {
+        const FMatrix& ParentWorldMatrix = AttachParent->GetWorldMatrix();
+        FMatrix ParentWorldAndRot = RelativeTransform.Rotation.ToMatrix() * ParentWorldMatrix;
+        return ParentWorldAndRot.GetUp();
+    }
     return RelativeTransform.Rotation.RotateVector(FVector(0, 0, 1)).GetNormalized();
 }

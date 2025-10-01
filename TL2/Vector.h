@@ -7,7 +7,6 @@
 #include "UEContainer.h"
 #include "UI/GlobalConsole.h"
 
-
 // 혹시 다른 헤더에서 새어 들어온 매크로 방지
 #ifdef min
 #undef min
@@ -276,6 +275,13 @@ struct FVector
     {
         return FVector(1.f, 1.f, 1.f);
     }
+
+    void Log()
+    {
+        char debugMsg[64];
+        sprintf_s(debugMsg, "Vector3(%f, %f, %f)",X,Y,Z);
+        UE_LOG(debugMsg);
+    }
 };
 
 // ─────────────────────────────
@@ -306,6 +312,12 @@ struct FVector4
             (Z > B.Z) ? Z : B.Z,
             (W > B.W) ? W : B.W
         );
+    }
+    void Log()
+    {
+        char debugMsg[64];
+        sprintf_s(debugMsg, "Vector4(%f, %f, %f, %f)", X, Y, Z, W);
+        UE_LOG(debugMsg);
     }
 };
 
@@ -430,6 +442,18 @@ struct alignas(16) FMatrix
             }
         }
         return T;
+    }
+    FVector GetForward() const
+    {
+        return FVector(M[0][0], M[0][1], M[0][2]).GetNormalized();
+    }
+    FVector GetRight() const
+    {
+        return FVector(M[1][0], M[1][1], M[1][2]).GetNormalized();
+    }    
+    FVector GetUp() const
+    {
+        return FVector(M[2][0], M[2][1], M[2][2]).GetNormalized();
     }
 
     // Affine 역행렬 (마지막 행 = [0,0,0,1] 가정)
