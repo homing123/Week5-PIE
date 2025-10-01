@@ -43,9 +43,9 @@ struct FVertexDynamic
 };
 
 struct FBillboardVertexInfo {
-    FVector WorldPosition;
-    FVector2D CharSize;//char scale
-    FVector4 UVRect;//uv start && uv size
+    FVector WorldPosition; //  WORLDPOSITION : 월드 좌표의 중심점
+    FVector2D SizeWS;      //  SIZE          : (Width, Height) in world units / char scale in text
+    FVector4 UVRect;       // UVRECT         : (uMin, vMin, uSize, vSize)
 };
 
 struct FBillboardVertexInfo_GPU {

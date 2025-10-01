@@ -5,7 +5,8 @@
 #include "StaticMesh.h"
 #include "Material.h"
 #include "Texture.h"
-#include "DynamicMesh.h"
+// jft
+// #include "DynamicMesh.h"
 #include "TextQuad.h"
 #include "LineDynamicMesh.h"
 
@@ -165,8 +166,9 @@ ResourceType UResourceManager::GetResourceType()
         return ResourceType::StaticMesh;
     if (T::StaticClass() == UTextQuad::StaticClass())
         return ResourceType::TextQuad;
-    if (T::StaticClass() == UDynamicMesh::StaticClass())
-        return ResourceType::DynamicMesh;
+    // jft
+    /*if (T::StaticClass() == UDynamicMesh::StaticClass())
+        return ResourceType::DynamicMesh;*/
     if (T::StaticClass() == ULineDynamicMesh::StaticClass())
         return ResourceType::DynamicMesh; // share bucket with DynamicMesh
     if (T::StaticClass() == UShader::StaticClass())
