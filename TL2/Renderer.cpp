@@ -112,6 +112,10 @@ void URenderer::UpdateUVScroll(const FVector2D& Speed, float TimeSec)
 
 void URenderer::DrawIndexedPrimitiveComponent(UStaticMesh* InMesh, D3D11_PRIMITIVE_TOPOLOGY InTopology, const TArray<FMaterialSlot>& InComponentMaterialSlots)
 {
+    if (InMesh == nullptr)
+    {
+        return;
+    }
     URenderingStatsCollector& StatsCollector = URenderingStatsCollector::GetInstance();
     
     // 디버그: StaticMesh 렌더링 통계

@@ -112,7 +112,7 @@ static void DebugRTTI_UObject(UObject* Obj, const char* Title)
 
 void UWorld::Initialize()
 {
-	FObjManager::Preload();
+	//FObjManager::Preload();
 
 	// 새 씬 생성
 	CreateNewScene();
@@ -153,8 +153,9 @@ void UWorld::InitializeGizmo()
 	// === 기즈모 엑터 초기화 ===
 	GizmoActor = NewObject<AGizmoActor>();
 	GizmoActor->SetWorld(this);
-	GizmoActor->SetActorTransform(FTransform(FVector{ 0, 0, 0 }, FQuat::MakeFromEuler(FVector{ 0, -90, 0 }),
-		FVector{ 1, 1, 1 }));
+	GizmoActor->SetActorLocation(FVector(0, 0, 0 ));
+	GizmoActor->SetActorRotation(FQuat::MakeFromEuler(FVector( 0, -90, 0 )));
+	GizmoActor->SetActorScale(FVector(0, 0, 0));
 	// 기즈모에 카메라 참조 설정
 	if (MainCameraActor)
 	{
@@ -378,11 +379,10 @@ void UWorld::RenderViewports(ACameraActor* Camera, FViewport* Viewport)
 
 			Renderer->UpdateHighLightConstantBuffer(bIsSelected, rgb, 0, 0, 0, 0);
 
-			for (USceneComponent* Component : Actor->GetComponents())
+			for (UActorComponent* Component : Actor->GetComponents())
 			{
 				if (!Component) continue;
-				if (UActorComponent* ActorComp = Cast<UActorComponent>(Component))
-					if (!ActorComp->IsActive()) continue;
+				if (!Component->IsActive()) continue;
 
 
 					if (Cast<UTextRenderComponent>(Component) && !IsShowFlagEnabled(EEngineShowFlags::SF_BillboardText))
@@ -410,11 +410,10 @@ void UWorld::RenderViewports(ACameraActor* Camera, FViewport* Viewport)
 		if (Cast<AGridActor>(EngineActor) && !IsShowFlagEnabled(EEngineShowFlags::SF_Grid))
 			continue;
 
-		for (USceneComponent* Component : EngineActor->GetComponents())
+		for (UActorComponent* Component : EngineActor->GetComponents())
 		{
 			if (!Component) continue;
-			if (UActorComponent* ActorComp = Cast<UActorComponent>(Component))
-				if (!ActorComp->IsActive()) continue;
+			if (!Component->IsActive()) continue;
 
 			if (UPrimitiveComponent* Primitive = Cast<UPrimitiveComponent>(Component))
 			{

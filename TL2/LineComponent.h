@@ -29,7 +29,7 @@ public:
     int64 GetLineCount() const { return static_cast<int64>(Lines.size()); }
     
     // Efficient world coordinate line data extraction
-    void GetWorldLineData(TArray<FVector>& OutStartPoints, TArray<FVector>& OutEndPoints, TArray<FVector4>& OutColors) const;
+    void GetWorldLineData(TArray<FVector>& OutStartPoints, TArray<FVector>& OutEndPoints, TArray<FVector4>& OutColors);
     bool HasVisibleLines() const { return bLinesVisible && !Lines.empty(); }
 
 private:

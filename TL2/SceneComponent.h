@@ -35,39 +35,42 @@ public:
     void SetRelativeScale(const FVector& NewScale);
     FVector GetRelativeScale() const;
 
-    void AddRelativeLocation(const FVector& DeltaLocation);
-    void AddRelativeRotation(const FQuat& DeltaRotation);
-    void AddRelativeScale3D(const FVector& DeltaScale);
+    void SetWorldLocation(const FVector& WorldLocation);
+    void SetRelativeTransform(const FTransform& InRelativeTransform);
+
+    //void AddRelativeLocation(const FVector& DeltaLocation);
+    //void AddRelativeRotation(const FQuat& DeltaRotation);
+    //void AddRelativeScale3D(const FVector& DeltaScale);
 
     // ──────────────────────────────
     // World Transform API
     // ──────────────────────────────
-    FTransform GetWorldTransform() const;
-    void SetWorldTransform(const FTransform& W);
+    //const FTransform& GetWorldTransform() const;
+    //void SetWorldTransform(const FTransform& W);
 
-    void SetWorldLocation(const FVector& L);
-    FVector GetWorldLocation() const;
+   /* void SetWorldLocation(const FVector& L);
+    const FVector& GetWorldLocation() const;
 
     void SetWorldRotation(const FQuat& R);
-    FQuat GetWorldRotation() const;
+    const FQuat& GetWorldRotation() const;
 
     void SetWorldScale(const FVector& S);
-    FVector GetWorldScale() const;
+    const FVector& GetWorldScale() const;*/
 
-    void AddWorldOffset(const FVector& Delta);
+ /*   void AddWorldOffset(const FVector& Delta);
     void AddWorldRotation(const FQuat& DeltaRot);
     void SetWorldLocationAndRotation(const FVector& L, const FQuat& R);
 
     void AddLocalOffset(const FVector& Delta);
     void AddLocalRotation(const FQuat& DeltaRot);
-    void SetLocalLocationAndRotation(const FVector& L, const FQuat& R);
+    void SetLocalLocationAndRotation(const FVector& L, const FQuat& R);*/
 
-    FMatrix GetWorldMatrix() const; // ToMatrixWithScale
+    const FMatrix& GetWorldMatrix(); // ToMatrixWithScale
 
     // ──────────────────────────────
     // Attach/Detach
     // ──────────────────────────────
-    void SetupAttachment(USceneComponent* InParent, EAttachmentRule Rule = EAttachmentRule::KeepWorld);
+    void SetupAttachment(USceneComponent* InParent);
     void DetachFromParent(bool bKeepWorld = true);
 
     // ──────────────────────────────
@@ -81,22 +84,19 @@ public:
 
 protected:
     virtual void RenderDetail() override;
-
-    void UpdateRelativeTransform();
-
 protected:
-    FVector RelativeLocation{ 0,0,0 };
-    FQuat   RelativeRotation;
-    FVector RelativeScale{ 1,1,1 };
-
     
+    FTransform RelativeTransform;
+
     // Hierarchy
     USceneComponent* AttachParent = nullptr;
     TArray<USceneComponent*> AttachChildren;
 
-    // 로컬(부모 기준) 트랜스폼
-    FTransform RelativeTransform;
+    FMatrix WorldMatrix;
 
 private:
+    void TransformDirty();
+private:
     bool bUniformScale = true;
+    bool bTransformDirty = true;
 };

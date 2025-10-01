@@ -71,11 +71,9 @@ void ACameraActor::SetAnglesImmediate(float InPitchDeg, float InYawDeg)
 
     // 입력 경로와 동일한 축/순서로 쿼터니언 조립
     // 사용 중인 좌표계: Pitch = Y축, Yaw = Z축 (질문에서 언급하신 매핑)
-    const float RadPitch = DegreeToRadian(CameraPitchDeg);
-    const float RadYaw = DegreeToRadian(CameraYawDeg);
 
-    const FQuat QYaw = FQuat::FromAxisAngle(FVector{ 0, 0, 1 }, RadYaw);
-    const FQuat QPitch = FQuat::FromAxisAngle(FVector{ 0, 1, 0 }, RadPitch);
+    const FQuat QYaw = FQuat(FVector(0, 0, 1 ), CameraYawDeg);
+    const FQuat QPitch = FQuat(FVector(0, 1, 1), CameraPitchDeg);
 
     // 조립 순서도 입력 경로와 동일하게
     const FQuat FinalRot = QYaw * QPitch;
@@ -182,9 +180,9 @@ void ACameraActor::ProcessCameraRotation(float DeltaSeconds)
     float CurrentRoll = UIManager.GetStoredRoll();
 
     // 축별 개별 쿼터니언 생성
-    FQuat PitchQuat = FQuat::FromAxisAngle(FVector(0, 1, 0), DegreeToRadian(CameraPitchDeg));
-    FQuat YawQuat = FQuat::FromAxisAngle(FVector(0, 0, 1), DegreeToRadian(CameraYawDeg));
-    FQuat RollQuat = FQuat::FromAxisAngle(FVector(1, 0, 0), DegreeToRadian(CurrentRoll));
+    FQuat PitchQuat = FQuat(FVector(0, 1, 0), CameraPitchDeg);
+    FQuat YawQuat = FQuat(FVector(0, 0, 1), CameraYawDeg);
+    FQuat RollQuat = FQuat(FVector(1, 0, 0), CurrentRoll);
 
     // RzRxRy 순서로 회전 합성 (Roll(Z) → Pitch(X) → Yaw(Y))
     FQuat FinalRotation = YawQuat * PitchQuat * RollQuat;

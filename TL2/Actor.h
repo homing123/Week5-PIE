@@ -21,12 +21,6 @@ public:
     virtual void Tick(float DeltaSeconds);
     virtual void Destroy();
 
-    // ───────────────
-    // Transform API
-    // ───────────────
-    void SetActorTransform(const FTransform& NewTransform);
-    FTransform GetActorTransform() const;
-
     void SetActorLocation(const FVector& NewLocation);
     FVector GetActorLocation() const;
 
@@ -39,18 +33,9 @@ public:
 
     FMatrix GetWorldMatrix() const;
 
-    FVector GetActorForward() const { return GetActorRotation().RotateVector(FVector(0, 1, 0)); }
-    FVector GetActorRight()   const { return GetActorRotation().RotateVector(FVector(1, 0, 0)); }
+    FVector GetActorForward() const { return GetActorRotation().RotateVector(FVector(1, 0, 0)); }
+    FVector GetActorRight()   const { return GetActorRotation().RotateVector(FVector(0, 1, 0)); }
     FVector GetActorUp()      const { return GetActorRotation().RotateVector(FVector(0, 0, 1)); }
-
-    void AddActorWorldRotation(const FQuat& DeltaRotation);
-    void AddActorWorldRotation(const FVector& DeltaEuler);
-    void AddActorWorldLocation(const FVector& DeltaRot);
-
-    void AddActorLocalRotation(const FVector& DeltaEuler);
-
-    void AddActorLocalRotation(const FQuat& DeltaRotation);
-    void AddActorLocalLocation(const FVector& DeltaRot);
 
     void SetWorld(UWorld* InWorld) { World = InWorld; }
     UWorld* GetWorld() const { return World; }
@@ -60,11 +45,12 @@ public:
     void SetIsPicked(bool picked) { bIsPicked = picked; }
     bool GetIsPicked() { return bIsPicked; }
 
+    void SetActorTransform(const FTransform& Transform);
 
 
     //-----------------------------
     //----------Getter------------
-    const TArray<USceneComponent*>& GetComponents() const;
+    const TArray<UActorComponent*>& GetComponents() const;
 
     void SetName(const FString& InName) { Name = InName; }
     const FName& GetName() { return Name; }
@@ -91,9 +77,9 @@ public:
     void SetActorHiddenInGame(bool bNewHidden) { bHiddenInGame = bNewHidden; }
     bool GetActorHiddenInGame() const { return bHiddenInGame; }
     bool IsActorVisible() const { return !bHiddenInGame; }
-    void AddComponent(USceneComponent* Component);
+    void AddComponent(UActorComponent* Component);
 protected:
-    TArray<USceneComponent*> Components;
+    TArray<UActorComponent*> Components;
     bool bIsPicked = false;
     bool bCanEverTick = true;
     bool bHiddenInGame = false;

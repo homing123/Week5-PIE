@@ -500,6 +500,10 @@ AActor* CPickingSystem::PerformViewportPicking(const TArray<AActor*>& Actors,
         Camera->GetUp(), Camera->GetForward(),
         ViewportMousePos, ViewportSize, ViewportOffset);
 
+    UE_LOG("Ray");
+    WorldRay.Origin.Log();
+    WorldRay.Direction.Log();
+
     // 2. 최종적으로 선택될 액터와 그 거리
     AActor* finalHitActor = nullptr;
     float finalClosestHitDistance = FLT_MAX;
@@ -524,25 +528,25 @@ AActor* CPickingSystem::PerformViewportPicking(const TArray<AActor*>& Actors,
             }
         }
     }
-    //else
-    //{
-    //    // 옥트리가 없을 경우를 대비한 Fallback 로직 (예: 전역 BVH 또는 전체 순회)
-    //    UE_LOG("[Picking] Octree is not available. Falling back to legacy picking.\n");
+    else
+    {
+        // 옥트리가 없을 경우를 대비한 Fallback 로직 (예: 전역 BVH 또는 전체 순회)
+        UE_LOG("[Picking] Octree is not available. Falling back to legacy picking.\n");
 
-    //    // (여기에 기존의 FBVH나 전체 액터 순회 로직을 둘 수 있습니다)
-    //    for (const auto& Actor : Actors)
-    //    {
-    //        float hitDistance;
-    //        if (CheckActorPicking(Actor, WorldRay, hitDistance))
-    //        {
-    //            if (hitDistance < finalClosestHitDistance)
-    //            {
-    //                finalClosestHitDistance = hitDistance;
-    //                finalHitActor = Actor;
-    //            }
-    //        }
-    //    }
-    //}
+        // (여기에 기존의 FBVH나 전체 액터 순회 로직을 둘 수 있습니다)
+        for (const auto& Actor : Actors)
+        {
+            float hitDistance;
+            if (CheckActorPicking(Actor, WorldRay, hitDistance))
+            {
+                if (hitDistance < finalClosestHitDistance)
+                {
+                    finalClosestHitDistance = hitDistance;
+                    finalHitActor = Actor;
+                }
+            }
+        }
+    }
     uint64_t ViewportAspectCycleDiff = ViewportAspectPickingTimer.Finish();
     double ViewportAspectPickingTimeMs = FPlatformTime::ToMilliseconds(ViewportAspectCycleDiff);
     URenderingStatsCollector::GetInstance().UpdatePickingStats(ViewportAspectPickingTimeMs);
@@ -1019,7 +1023,7 @@ void CPickingSystem::DragActorWithGizmo(AActor* Actor, AGizmoActor*  GizmoActor,
 }
 
 
-bool CPickingSystem::CheckGizmoComponentPicking(const UStaticMeshComponent* Component, const FRay& Ray, float& OutDistance)
+bool CPickingSystem::CheckGizmoComponentPicking(UStaticMeshComponent* Component, const FRay& Ray, float& OutDistance)
 {
     if (!Component) return false;
 
@@ -1030,7 +1034,7 @@ bool CPickingSystem::CheckGizmoComponentPicking(const UStaticMeshComponent* Comp
     if (!StaticMesh) return false;
 
     // 피킹 계산에는 컴포넌트의 월드 변환 행렬 사용
-    FMatrix WorldMatrix = Component->GetWorldMatrix();
+    const FMatrix& WorldMatrix = Component->GetWorldMatrix();
 
     auto TransformPoint = [&](float X, float Y, float Z) -> FVector
         {

@@ -5,12 +5,8 @@
 #include "ImGui/imgui.h"
 
 USceneComponent::USceneComponent()
-    : RelativeLocation(0, 0, 0)
-    , RelativeRotation(0, 0, 0, 1)
-    , RelativeScale(1, 1, 1)
-    , AttachParent(nullptr)
 {
-    UpdateRelativeTransform();
+
 }
 
 USceneComponent::~USceneComponent()
@@ -39,164 +35,189 @@ USceneComponent::~USceneComponent()
 // ──────────────────────────────
 // Relative API
 // ──────────────────────────────
-void USceneComponent::SetRelativeLocation(const FVector& NewLocation)
-{
-    RelativeLocation = NewLocation;
-    UpdateRelativeTransform();
+void USceneComponent::SetRelativeLocation(const FVector& NewLocation){
+    RelativeTransform.Translation = NewLocation;
+    TransformDirty();
 }
-FVector USceneComponent::GetRelativeLocation() const { return RelativeLocation; }
+FVector USceneComponent::GetRelativeLocation() const { return  RelativeTransform.Translation; }
 
 void USceneComponent::SetRelativeRotation(const FQuat& NewRotation)
 {
-    RelativeRotation = NewRotation;
-    UpdateRelativeTransform();
+    RelativeTransform.Rotation = NewRotation;
+    TransformDirty();
 }
-FQuat USceneComponent::GetRelativeRotation() const { return RelativeRotation; }
+FQuat USceneComponent::GetRelativeRotation() const { return  RelativeTransform.Rotation; }
 
 void USceneComponent::SetRelativeScale(const FVector& NewScale)
 {
-    RelativeScale = NewScale;
-    UpdateRelativeTransform();
+    RelativeTransform.Scale3D = NewScale;
+    TransformDirty();
 }
-FVector USceneComponent::GetRelativeScale() const { return RelativeScale; }
+FVector USceneComponent::GetRelativeScale() const { return  RelativeTransform.Scale3D; }
 
-void USceneComponent::AddRelativeLocation(const FVector& DeltaLocation)
+
+void USceneComponent::SetWorldLocation(const FVector& WorldLocation)
 {
-    RelativeLocation = RelativeLocation + DeltaLocation;
-    UpdateRelativeTransform();
+    TransformDirty();
+    if (AttachParent != nullptr) 
+    {
+        FMatrix InverseParentWorld = AttachParent->GetWorldMatrix().InverseAffine();
+        RelativeTransform.Translation = WorldLocation * InverseParentWorld;
+    }
+    else 
+    {
+        RelativeTransform.Translation = WorldLocation;
+    }
 }
 
-void USceneComponent::AddRelativeRotation(const FQuat& DeltaRotation)
+void USceneComponent::SetRelativeTransform(const FTransform& InRelativeTransform)
 {
-    RelativeRotation = DeltaRotation * RelativeRotation;
-    UpdateRelativeTransform();
+    RelativeTransform = InRelativeTransform;
+    TransformDirty();
 }
-
-void USceneComponent::AddRelativeScale3D(const FVector& DeltaScale)
+void USceneComponent::TransformDirty()
 {
-    RelativeScale = FVector(RelativeScale.X * DeltaScale.X,
-        RelativeScale.Y * DeltaScale.Y,
-        RelativeScale.Z * DeltaScale.Z);
-    UpdateRelativeTransform();
+    bTransformDirty = true;
+    for (USceneComponent* Child : AttachChildren)
+    {
+        Child->TransformDirty();
+    }
 }
 
 // ──────────────────────────────
 // World API
 // ──────────────────────────────
-FTransform USceneComponent::GetWorldTransform() const
-{
-    if (AttachParent)
-        return AttachParent->GetWorldTransform() * RelativeTransform;
-    return RelativeTransform;
-}
-
-void USceneComponent::SetWorldTransform(const FTransform& W)
-{
-    if (AttachParent)
-    {
-        const FTransform ParentWorld = AttachParent->GetWorldTransform();
-        RelativeTransform = ParentWorld.Inverse() * W;
-    }
-    else
-    {
-        RelativeTransform = W;
-    }
-
-    RelativeLocation = RelativeTransform.Translation;
-    RelativeRotation = RelativeTransform.Rotation;
-    RelativeScale = RelativeTransform.Scale3D;
-}
+//const FTransform& USceneComponent::GetWorldTransform() const
+//{
+//    if (bTransformDirty)
+//    {
+//        if (AttachParent != nullptr)
+//        {
+//            const FTransform& ParentTransform = AttachParent->GetWorldTransform();
+//            WorldTransform = RelativeTransform * ParentTransform;
+//        }
+//    }
+//    
+//    return RelativeTransform;
+//}
+//
+//void USceneComponent::SetWorldTransform(const FTransform& W)
+//{
+//    if (AttachParent)
+//    {
+//        const FTransform ParentWorld = AttachParent->GetWorldTransform();
+//        RelativeTransform = ParentWorld.Inverse() * W;
+//    }
+//    else
+//    {
+//        RelativeTransform = W;
+//    }
+//
+//    RelativeLocation = RelativeTransform.Translation;
+//    RelativeRotation = RelativeTransform.Rotation;
+//    RelativeScale = RelativeTransform.Scale3D;
+//}
  
-void USceneComponent::SetWorldLocation(const FVector& L)
-{
-    FTransform W = GetWorldTransform();
-    W.Translation = L;
-    SetWorldTransform(W);
-}
-FVector USceneComponent::GetWorldLocation() const
-{
-    return GetWorldTransform().Translation;
-}
+//void USceneComponent::SetWorldLocation(const FVector& L)
+//{
+//    FTransform W = GetWorldTransform();
+//    W.Translation = L;
+//    SetWorldTransform(W);
+//}
+//FVector USceneComponent::GetWorldLocation() const
+//{
+//    return GetWorldTransform().Translation;
+//}
+//
+//void USceneComponent::SetWorldRotation(const FQuat& R)
+//{
+//    FTransform W = GetWorldTransform();
+//    W.Rotation = R;
+//    SetWorldTransform(W);
+//}
+//FQuat USceneComponent::GetWorldRotation() const
+//{
+//    return GetWorldTransform().Rotation;
+//}
+//
+//void USceneComponent::SetWorldScale(const FVector& S)
+//{
+//    FTransform W = GetWorldTransform();
+//    W.Scale3D = S;
+//    SetWorldTransform(W);
+//}
+//FVector USceneComponent::GetWorldScale() const
+//{
+//    return GetWorldTransform().Scale3D;
+//}
 
-void USceneComponent::SetWorldRotation(const FQuat& R)
-{
-    FTransform W = GetWorldTransform();
-    W.Rotation = R;
-    SetWorldTransform(W);
-}
-FQuat USceneComponent::GetWorldRotation() const
-{
-    return GetWorldTransform().Rotation;
-}
-
-void USceneComponent::SetWorldScale(const FVector& S)
-{
-    FTransform W = GetWorldTransform();
-    W.Scale3D = S;
-    SetWorldTransform(W);
-}
-FVector USceneComponent::GetWorldScale() const
-{
-    return GetWorldTransform().Scale3D;
-}
-
-void USceneComponent::AddWorldOffset(const FVector& Delta)
-{
-    FTransform W = GetWorldTransform();
-    W.Translation = W.Translation + Delta;
-    SetWorldTransform(W);
-}
-
-void USceneComponent::AddWorldRotation(const FQuat& DeltaRot)
-{
-    FTransform W = GetWorldTransform();
-    W.Rotation = DeltaRot * W.Rotation;
-    SetWorldTransform(W);
-}
-
-
-void USceneComponent::SetWorldLocationAndRotation(const FVector& L, const FQuat& R)
-{
-    FTransform W = GetWorldTransform();
-    W.Translation = L;
-    W.Rotation = R;
-    SetWorldTransform(W);
-}
-
-void USceneComponent::AddLocalOffset(const FVector& Delta)
-{
-    const FVector parentDelta = RelativeRotation.RotateVector(Delta);
-    RelativeLocation = RelativeLocation + parentDelta;
-    UpdateRelativeTransform();
-}
-
-void USceneComponent::AddLocalRotation(const FQuat& DeltaRot)
-{
-    RelativeRotation = (RelativeRotation * DeltaRot).GetNormalized(); // 로컬: 우측곱
-    UpdateRelativeTransform();
-}
-
-void USceneComponent::SetLocalLocationAndRotation(const FVector& L, const FQuat& R)
-{
-    RelativeLocation = L;
-    RelativeRotation = R.GetNormalized();
-    UpdateRelativeTransform();
-}
+//void USceneComponent::AddWorldOffset(const FVector& Delta)
+//{
+//    FTransform W = GetWorldTransform();
+//    W.Translation = W.Translation + Delta;
+//    SetWorldTransform(W);
+//}
+//
+//void USceneComponent::AddWorldRotation(const FQuat& DeltaRot)
+//{
+//    FTransform W = GetWorldTransform();
+//    W.Rotation = DeltaRot * W.Rotation;
+//    SetWorldTransform(W);
+//}
+//
+//
+//void USceneComponent::SetWorldLocationAndRotation(const FVector& L, const FQuat& R)
+//{
+//    FTransform W = GetWorldTransform();
+//    W.Translation = L;
+//    W.Rotation = R;
+//    SetWorldTransform(W);
+//}
+//
+//void USceneComponent::AddLocalOffset(const FVector& Delta)
+//{
+//    const FVector parentDelta = RelativeRotation.RotateVector(Delta);
+//    RelativeLocation = RelativeLocation + parentDelta;
+//    UpdateRelativeTransform();
+//}
+//
+//void USceneComponent::AddLocalRotation(const FQuat& DeltaRot)
+//{
+//    RelativeRotation = (RelativeRotation * DeltaRot).GetNormalized(); // 로컬: 우측곱
+//    UpdateRelativeTransform();
+//}
+//
+//void USceneComponent::SetLocalLocationAndRotation(const FVector& L, const FQuat& R)
+//{
+//    RelativeLocation = L;
+//    RelativeRotation = R.GetNormalized();
+//    UpdateRelativeTransform();
+//}
 
 
-FMatrix USceneComponent::GetWorldMatrix() const
+const FMatrix& USceneComponent::GetWorldMatrix()
 {
-    return GetWorldTransform().ToMatrixWithScaleLocalXYZ();
+    if (bTransformDirty)
+    {
+        bTransformDirty = false;
+        if (AttachParent != nullptr)
+        {
+            WorldMatrix = RelativeTransform.GetWorldMatrix() * AttachParent->GetWorldMatrix();
+        }
+        else
+        {
+            WorldMatrix = RelativeTransform.GetWorldMatrix();
+        }
+    }
+    return WorldMatrix;
 }
 
 // ──────────────────────────────
 // Attach / Detach
 // ──────────────────────────────
-void USceneComponent::SetupAttachment(USceneComponent* InParent, EAttachmentRule Rule)
+void USceneComponent::SetupAttachment(USceneComponent* InParent)
 {
     if (AttachParent == InParent) return;
-
-    const FTransform OldWorld = GetWorldTransform();
 
     // 기존 부모에서 제거
     if (AttachParent)
@@ -211,30 +232,12 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, EAttachmentRule
         AttachParent->AttachChildren.push_back(this);
 
     // 규칙 적용
-    if (AttachParent)
-    {
-        if (Rule == EAttachmentRule::KeepWorld)
-        {
-            const FTransform ParentWorld = AttachParent->GetWorldTransform();
-            RelativeTransform = ParentWorld.Inverse() * OldWorld;
-        }
-        // KeepRelative: 기존 RelativeTransform 유지
-    }
-    else
-    {
-        if (Rule == EAttachmentRule::KeepWorld)
-            RelativeTransform = OldWorld;
-    }
 
-    RelativeLocation = RelativeTransform.Translation;
-    RelativeRotation = RelativeTransform.Rotation;
-    RelativeScale = RelativeTransform.Scale3D;
+    TransformDirty();
 }
 
 void USceneComponent::DetachFromParent(bool bKeepWorld)
 {
-    const FTransform OldWorld = GetWorldTransform();
-
     if (AttachParent)
     {
         auto& Siblings = AttachParent->AttachChildren;
@@ -242,21 +245,13 @@ void USceneComponent::DetachFromParent(bool bKeepWorld)
         AttachParent = nullptr;
     }
 
-    if (bKeepWorld)
-        RelativeTransform = OldWorld;
+    TransformDirty();
 
-    RelativeLocation = RelativeTransform.Translation;
-    RelativeRotation = RelativeTransform.Rotation;
-    RelativeScale = RelativeTransform.Scale3D;
 }
 
 // ──────────────────────────────
 // 내부 유틸
 // ──────────────────────────────
-void USceneComponent::UpdateRelativeTransform()
-{
-    RelativeTransform = FTransform(RelativeLocation, RelativeRotation, RelativeScale);
-}
 
 
 
@@ -268,13 +263,13 @@ void USceneComponent::RenderDetail()
     if (ImGui::TreeNode("Transform"))
     {
         // Location 편집
-        if (ImGui::DragFloat3("Location", &RelativeLocation.X, 0.1f))
+        if (ImGui::DragFloat3("Location", &RelativeTransform.Translation.X, 0.1f))
         {
-            SetRelativeLocation(RelativeLocation);
+            SetRelativeLocation(RelativeTransform.Translation);
         }
 
         // Rotation 편집 (Euler angles)
-        FVector Euler = RelativeRotation.ToEuler();
+        FVector Euler = RelativeTransform.Rotation.ToEulerDegree();
         if (ImGui::DragFloat3("Rotation", &Euler.X, 0.5f))
         {
             SetRelativeRotation(FQuat::MakeFromEuler(Euler));
@@ -285,7 +280,7 @@ void USceneComponent::RenderDetail()
 
         if (bUniformScale)
         {
-            float UniformScale = RelativeScale.X;
+            float UniformScale = RelativeTransform.Scale3D.X;
             if (ImGui::DragFloat("Scale", &UniformScale, 0.01f, 0.01f, 10.0f))
             {
                 SetRelativeScale(UniformScale);
@@ -293,9 +288,9 @@ void USceneComponent::RenderDetail()
         }
         else
         {
-            if (ImGui::DragFloat3("Scale", &RelativeScale.X, 0.01f, 0.01f, 10.0f))
+            if (ImGui::DragFloat3("Scale", &RelativeTransform.Scale3D.X, 0.01f, 0.01f, 10.0f))
             {
-                SetRelativeScale(RelativeScale);
+                SetRelativeScale(RelativeTransform.Scale3D);
             }
         }
         ImGui::TreePop();
