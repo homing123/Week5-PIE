@@ -261,7 +261,7 @@ void URenderer::DrawIndexedPrimitiveComponent(UBillboardComponent* Comp, D3D11_P
     URenderingStatsCollector& StatsCollector = URenderingStatsCollector::GetInstance();
 
     // QuadMesh는 PositionColorTexturNormal 레이아웃을 사용하므로 FVertexDynamic 사이즈를 사용합니다.
-    UINT Stride = sizeof(FVertexDynamic);
+    UINT Stride = sizeof(FBillboardVertexInfo);
 
     UStaticMesh* Mesh = Comp->GetStaticMesh();
     if (!Mesh) return;

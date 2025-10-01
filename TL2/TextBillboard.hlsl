@@ -5,8 +5,6 @@ cbuffer CameraInfo : register(b0)
     row_major matrix viewMatrix;
     row_major matrix projectionMatrix;
     row_major matrix viewInverse;
-    //float3 cameraRight_worldspace;
-    //float3 cameraUp_worldspace;
 };
 
 // C++의 BillboardCharInfo와 레이아웃이 동일해야 하는 입력 구조체

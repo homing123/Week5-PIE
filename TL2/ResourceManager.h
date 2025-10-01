@@ -57,7 +57,6 @@ public:
    // void CreateBoxMesh(const FVector& Min, const FVector& Max, const FString& FilePath);
     // jft
     void GetTexture(UTexture*& InTexture, const FString& InFilePath);
-    UStaticMesh* GetQuadMesh();
 
     void CreateDefaultShader();
     void InitShaderILMap();

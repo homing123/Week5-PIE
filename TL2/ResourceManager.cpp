@@ -398,10 +398,12 @@ UStaticMesh* UResourceManager::GetQuadMesh(FVector WorldPos)
     UVs.push_back(FVector2D(0, 1)); // Bottom-left
     UVs.push_back(FVector2D(1, 1)); // Bottom-right
 
-    TArray<FVector> Normals;
-    Normals.insert(Normals.end(), 4, FVector(0, 0, -1)); // Billboard : 카메라를 바라보는 방향
 
-    TArray<uint32> indices = { 0, 2, 1, 1, 2, 3 }; // 사각형을 만드는 삼각형 2개
+    struct FBillboardVertexInfo {
+        FVector WorldPosition; //  WORLDPOSITION : 월드 좌표의 중심점
+        FVector2D SizeWS;      //  SIZE          : (Width, Height) in world units / char scale in text
+        FVector4 UVRect;       // UVRECT         : (uMin, vMin, uSize, vSize)
+    };
 
     FMeshData* MeshData = new FMeshData();
     MeshData->Vertices = UVPostion;

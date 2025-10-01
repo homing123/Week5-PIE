@@ -192,9 +192,9 @@ inline HRESULT D3D11RHI::CreateVertexBuffer<FVertexDynamic>(ID3D11Device* device
 
 // Billboard -> Icon
 template<>
-inline HRESULT D3D11RHI::CreateVertexBuffer<FBillboardInfo>(ID3D11Device* device, const FMeshData& mesh, ID3D11Buffer** outBuffer)
+inline HRESULT D3D11RHI::CreateVertexBuffer<FBillboardInfo_GPU>(ID3D11Device* device, const FMeshData& mesh, ID3D11Buffer** outBuffer)
 {
-    return CreateVertexBufferImpl<FBillboardInfo>(device, mesh, outBuffer,
+    return CreateVertexBufferImpl<FBillboardInfo_GPU>(device, mesh, outBuffer,
         D3D11_USAGE_DEFAULT, 0);
 }
 
