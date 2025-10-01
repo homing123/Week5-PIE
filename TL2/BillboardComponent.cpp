@@ -10,7 +10,7 @@ UBillboardComponent::UBillboardComponent()
 
 	Material = NewObject<UMaterial>();
 
-	UShader* BillboardShader = UResourceManager::GetInstance().Get<UShader>("StaticMeshShader.hlsl");
+	UShader* BillboardShader = UResourceManager::GetInstance().Get<UShader>("TextBillboard.hlsl");
 	if (BillboardShader)
 	{
 		Material->SetShader(BillboardShader);
@@ -42,12 +42,9 @@ void UBillboardComponent::Render(URenderer* Renderer, const FMatrix& View, const
 
 	FVector CamRight = CameraActor->GetActorRight();
 	FVector CamUp = CameraActor->GetActorUp();
-
-	 //FVector CameraPosition = CameraActor->GetActorLocation();
-	// Renderer->UpdateBillboardConstantBuffers(Owner->GetActorLocation() + FVector(0.f, 0.f, 1.f) * Owner->GetActorScale().Z, View, Proj, CamRight, CamUp);
-
-	// FVector WorldLocation = GetWorldLocation();
-	// Renderer->UpdateBillboardConstantBuffers(WorldLocation, View, Proj, CamRight, CamUp);
+	
+	FVector CameraPosition = CameraActor->GetActorLocation();
+	Renderer->UpdateBillboardConstantBuffers(Owner->GetActorLocation() + FVector(0.f, 0.f, 1.f) * Owner->GetActorScale().Z, View, Proj, CamRight, CamUp);
 	
 	Renderer->PrepareShader(Material->GetShader());
 	

@@ -379,7 +379,8 @@ void UResourceManager::GetTexture(UTexture*& InTexture, const FString& InFilePat
     InTexture->Load(InFilePath, Device);
 }
 
-UStaticMesh* UResourceManager::GetQuadMesh()
+// jft
+UStaticMesh* UResourceManager::GetQuadMesh(FVector WorldPos)
 {
     const FString QuadMeshName = "DefaultQuad";
     if (auto* QuadMesh = Get<UStaticMesh>(QuadMeshName))
@@ -388,14 +389,8 @@ UStaticMesh* UResourceManager::GetQuadMesh()
     }
 
     // 없다면 StaticMesh 새로 생성
-    TArray<FVector> UVPostion;
-    UVPostion.push_back(FVector(-0.5f, 0.5f, 0.f));  // Top-left
-    UVPostion.push_back(FVector(0.5f, 0.5f, 0.f));   // Top-right
-    UVPostion.push_back(FVector(-0.5f, -0.5f, 0.f)); // Bottom-left
-    UVPostion.push_back(FVector(0.5f, -0.5f, 0.f));  // Bottom-right
-
-    TArray<FVector4> Colors;
-    Colors.insert(Colors.end(), 4, FVector4(1, 1, 1, 1)); // 모든 정점을 흰색으로
+    FVector WorldPosition = WorldPos;
+    FVector UVScale = FVector(1.0f, 1.0f, 0.0f);
 
     TArray<FVector2D> UVs;
     UVs.push_back(FVector2D(0, 0)); // Top-left
@@ -406,7 +401,7 @@ UStaticMesh* UResourceManager::GetQuadMesh()
     TArray<FVector> Normals;
     Normals.insert(Normals.end(), 4, FVector(0, 0, -1)); // Billboard : 카메라를 바라보는 방향
 
-    TArray<uint32> indices = { 0, 1, 2, 1, 3, 2 }; // 사각형을 만드는 삼각형 2개
+    TArray<uint32> indices = { 0, 2, 1, 1, 2, 3 }; // 사각형을 만드는 삼각형 2개
 
     FMeshData* MeshData = new FMeshData();
     MeshData->Vertices = UVPostion;
@@ -417,7 +412,7 @@ UStaticMesh* UResourceManager::GetQuadMesh()
 
     // UStaticMesh 객체를 생성, MeshData 로드
     UStaticMesh* NewQuadMesh = NewObject<UStaticMesh>();
-    NewQuadMesh->Load(MeshData, Device, EVertexLayoutType::PositionColorTexturNormal);
+    NewQuadMesh->Load(MeshData, Device, EVertexLayoutType::PositionBillBoard);
 
     // 메시 재사용을 위해 적재
     Add<UStaticMesh>(QuadMeshName, NewQuadMesh);

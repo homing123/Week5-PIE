@@ -68,12 +68,10 @@ struct ColorBufferType
 
 struct BillboardBufferType
 {
-    FVector pos;
+    FVector CompPosition;
     FMatrix View;
     FMatrix Proj;
     FMatrix InverseViewMat;
-    /*FVector cameraRight;
-    FVector cameraUp;*/
 };
 
 void D3D11RHI::Initialize(HWND hWindow)
@@ -297,7 +295,8 @@ void D3D11RHI::UpdateModelConstantBuffers(const FMatrix& ModelMatrix)
     }
 }
 
-void D3D11RHI::UpdateBillboardConstantBuffers(const FVector& pos, const FMatrix& ViewMatrix, const FMatrix& ProjMatrix,
+// jft
+void D3D11RHI::UpdateBillboardConstantBuffers(const FVector& Position, const FMatrix& ViewMatrix, const FMatrix& ProjMatrix,
     const FVector& CameraRight, const FVector& CameraUp)
 {
     
@@ -306,7 +305,7 @@ void D3D11RHI::UpdateBillboardConstantBuffers(const FVector& pos, const FMatrix&
     auto* dataPtr = reinterpret_cast<BillboardBufferType*>(mapped.pData);
 
     // HLSL 기본 row-major와 맞추기 위해 전치
-    dataPtr->pos = pos;
+    dataPtr->CompPosition = Position;
     dataPtr->View = ViewMatrix;
     dataPtr->Proj = ProjMatrix;
     dataPtr->InverseViewMat = ViewMatrix.InverseAffine();

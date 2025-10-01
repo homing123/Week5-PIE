@@ -91,9 +91,9 @@ void URenderer::UpdateHighLightConstantBuffer(const uint32 InPicked, const FVect
     RHIDevice->UpdateHighLightConstantBuffers(InPicked, InColor, X, Y, Z, Gizmo);
 }
 
-void URenderer::UpdateBillboardConstantBuffers(const FVector& pos,const FMatrix& ViewMatrix, const FMatrix& ProjMatrix, const FVector& CameraRight, const FVector& CameraUp)
+void URenderer::UpdateBillboardConstantBuffers(const FVector& CompPosition, const FMatrix& ViewMatrix, const FMatrix& ProjMatrix, const FVector& CameraRight, const FVector& CameraUp)
 {
-    RHIDevice->UpdateBillboardConstantBuffers(pos,ViewMatrix, ProjMatrix, CameraRight, CameraUp);
+    RHIDevice->UpdateBillboardConstantBuffers(CompPosition,ViewMatrix, ProjMatrix, CameraRight, CameraUp);
 }
 
 void URenderer::UpdatePixelConstantBuffers(const FObjMaterialInfo& InMaterialInfo, bool bHasMaterial, bool bHasTexture)
@@ -260,11 +260,12 @@ void URenderer::DrawIndexedPrimitiveComponent(UBillboardComponent* Comp, D3D11_P
 {
     URenderingStatsCollector& StatsCollector = URenderingStatsCollector::GetInstance();
 
+    // QuadMesh는 PositionColorTexturNormal 레이아웃을 사용하므로 FVertexDynamic 사이즈를 사용합니다.
+    UINT Stride = sizeof(FVertexDynamic);
+
     UStaticMesh* Mesh = Comp->GetStaticMesh();
     if (!Mesh) return;
 
-    // QuadMesh는 PositionColorTexturNormal 레이아웃을 사용하므로 FVertexDynamic 사이즈를 사용합니다.
-    UINT Stride = sizeof(FVertexDynamic);
     ID3D11Buffer* VertexBuff = Mesh->GetVertexBuffer();
     ID3D11Buffer* IndexBuff = Mesh->GetIndexBuffer();
 
@@ -309,6 +310,7 @@ void URenderer::DrawIndexedPrimitiveComponent(UBillboardComponent* Comp, D3D11_P
     // --- 그리기 ---
     RHIDevice->GetDeviceContext()->IASetPrimitiveTopology(InTopology);
     RHIDevice->GetDeviceContext()->DrawIndexed(Mesh->GetIndexCount(), 0, 0);
+
     StatsCollector.IncrementDrawCalls();
 }
 

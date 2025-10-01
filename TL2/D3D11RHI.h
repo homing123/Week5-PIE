@@ -31,6 +31,9 @@ public:
     template<typename TVeretex>
     static HRESULT CreateVertexBuffer(ID3D11Device* device, const FMeshData& mesh, ID3D11Buffer** outBuffer);
 
+    template<typename TVeretex>
+    static HRESULT CreateVertexBuffer(ID3D11Device* device, const FMeshData& mesh, ID3D11Buffer** outBuffer);
+
     template<typename TVertex>
     static HRESULT CreateVertexBufferImpl(ID3D11Device* device, const std::vector<FNormalVertex>& srcVertices, ID3D11Buffer** outBuffer, D3D11_USAGE usage, UINT cpuAccessFlags);
 
@@ -184,6 +187,14 @@ template<>
 inline HRESULT D3D11RHI::CreateVertexBuffer<FVertexDynamic>(ID3D11Device* device, const FMeshData& mesh, ID3D11Buffer** outBuffer)
 {
     return CreateVertexBufferImpl<FVertexDynamic>(device, mesh, outBuffer,
+        D3D11_USAGE_DEFAULT, 0);
+}
+
+// Billboard -> Icon
+template<>
+inline HRESULT D3D11RHI::CreateVertexBuffer<FBillboardInfo>(ID3D11Device* device, const FMeshData& mesh, ID3D11Buffer** outBuffer)
+{
+    return CreateVertexBufferImpl<FBillboardInfo>(device, mesh, outBuffer,
         D3D11_USAGE_DEFAULT, 0);
 }
 

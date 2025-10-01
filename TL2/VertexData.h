@@ -84,3 +84,9 @@ struct FBillboardVertexInfo_GPU {
         UVRect[3] = src.color.W;
     }
 };
+
+struct FBillboardInfo_GPU {
+    float Position[3];
+    float UVScale[2];
+    float UVRect[4];
+};
