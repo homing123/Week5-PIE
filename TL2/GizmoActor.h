@@ -69,7 +69,6 @@ public:
 
     void ProcessGizmoInteraction(ACameraActor* Camera, FViewport* Viewport, float MousePositionX, float MousePositionY);
     void UpdateConstantScreenScale(ACameraActor* Camera, FViewport* Viewport);
-  
 protected:
 
     UGizmoArrowComponent* ArrowX;

@@ -36,6 +36,7 @@ public:
     FVector GetRelativeScale() const;
 
     void SetWorldLocation(const FVector& WorldLocation);
+    FVector GetWorldLocation();
     void SetRelativeTransform(const FTransform& InRelativeTransform);
 
     //void AddRelativeLocation(const FVector& DeltaLocation);

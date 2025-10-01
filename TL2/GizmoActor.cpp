@@ -222,7 +222,7 @@ void AGizmoActor::SetSpaceWorldMatrix(EGizmoSpace NewSpace, AActor* PickedActor)
 	if (NewSpace == EGizmoSpace::World)
 	{
 
-		RootComponent->SetRelativeTransform(FTransform());
+		RootComponent->SetRelativeTransform(FTransform(PickedActor->GetActorLocation(), FQuat(), FVector(1,1,1)));
 		// 월드 고정 → 기즈모 축은 항상 X/Y/Z
 		   // 월드 고정 → 기즈모 축은 항상 X/Y/Z
 		//Arrow = 모델이 -y를 바라보고 있음
@@ -245,6 +245,8 @@ void AGizmoActor::SetSpaceWorldMatrix(EGizmoSpace NewSpace, AActor* PickedActor)
 			return;
 
 		// 타겟 액터 회전 가져오기
+		RootComponent->SetRelativeLocation(PickedActor->GetActorLocation());
+
 		FQuat TargetRot = PickedActor->GetActorRotation();
 
 		//Arrow = 모델이 -y를 바라보고 있음
@@ -578,7 +580,6 @@ worldPerPixel *= zoomFactor;*/
 void AGizmoActor::UpdateGizmoPosition()
 {
 	if (!TargetActor) return;
-
 	SetActorLocation(TargetActor->GetActorLocation());
 }
 

@@ -69,6 +69,16 @@ void USceneComponent::SetWorldLocation(const FVector& WorldLocation)
         RelativeTransform.Translation = WorldLocation;
     }
 }
+FVector USceneComponent::GetWorldLocation()
+{
+    if (AttachParent != nullptr)
+    {
+        const FMatrix& ParentWorldMatrix = AttachParent->GetWorldMatrix();
+        FVector temp = RelativeTransform.Translation * ParentWorldMatrix;
+        return RelativeTransform.Translation * ParentWorldMatrix;
+    }
+    return RelativeTransform.Translation;
+}
 
 void USceneComponent::SetRelativeTransform(const FTransform& InRelativeTransform)
 {
