@@ -5,7 +5,7 @@
 #include <limits>
 
 #include "UEContainer.h"
-
+#include "UI/GlobalConsole.h"
 
 
 // 혹시 다른 헤더에서 새어 들어온 매크로 방지
@@ -651,6 +651,19 @@ struct alignas(16) FMatrix
     static FMatrix LookAtLH(const FVector& Eye, const FVector& At, const FVector& Up);
     static FMatrix PerspectiveFovLH(float FovY, float Aspect, float Zn, float Zf);
     static FMatrix OrthoLH(float Width, float Height, float Zn, float Zf);
+
+    void Log() const
+    {
+        char debugMsg[256];
+        sprintf_s(debugMsg, "Matrix\n%f, %f, %f, %f \n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f",
+            FlatM[0], FlatM[1], FlatM[2], FlatM[3],
+            FlatM[4], FlatM[5], FlatM[6], FlatM[7],
+            FlatM[8], FlatM[9], FlatM[10], FlatM[11],
+            FlatM[12], FlatM[13], FlatM[14], FlatM[15]);
+        UE_LOG(debugMsg);
+    }
+
+    static const FMatrix ViewAxis;
 };
 
 //Without Last RC
@@ -696,21 +709,9 @@ struct FTransform
 
     // 역변환
     FTransform Inverse() const;
+    
+    FMatrix GetWorldMatrix() const;
 
-    // 유틸
-    FVector TransformPosition(const FVector& P) const
-    {
-        // (R*S)*P + T
-        FVector SP = FVector(P.X * Scale3D.X, P.Y * Scale3D.Y, P.Z * Scale3D.Z);
-        FVector RP = Rotation.RotateVector(SP);
-        return Translation + RP;
-    }
-    FVector TransformVector(const FVector& V) const
-    {
-        // R*(S*V) (translation 없음)
-        FVector SV = FVector(V.X * Scale3D.X, V.Y * Scale3D.Y, V.Z * Scale3D.Z);
-        return Rotation.RotateVector(SV);
-    }
 
     static FTransform Lerp(const FTransform& A, const FTransform& B, float T)
     {
@@ -1007,4 +1008,9 @@ inline FTransform FTransform::Inverse() const
     Out.Scale3D = InvScale;
     Out.Translation = InvTrans;
     return Out;
+}
+
+inline FMatrix FTransform::GetWorldMatrix() const
+{
+    return FMatrix::FromTRS(Translation, Rotation, Scale3D);
 }

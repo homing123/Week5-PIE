@@ -6,6 +6,8 @@
 #include "../../InputManager.h"
 #include "../../World.h"
 #include "SelectionManager.h"
+#include "SceneComponent.h"
+#include "StaticMeshComponent.h"
 
 //// UE_LOG 대체 매크로
 //#define UE_LOG(fmt, ...)
@@ -23,6 +25,7 @@ void UActorTerminationWidget::Initialize()
 {
 	// UIManager 참조 확보
 	UIManager = &UUIManager::GetInstance();
+	SelectionManager = &USelectionManager::GetInstance();
 }
 
 void UActorTerminationWidget::Update()
@@ -30,7 +33,7 @@ void UActorTerminationWidget::Update()
 	// UIManager를 통해 현재 선택된 액터 가져오기
 	if (UIManager)
 	{
-		AActor* CurrentSelectedActor = USelectionManager::GetInstance().GetSelectedActor();
+		AActor* CurrentSelectedActor = SelectionManager->GetSelectedActor();
 		
 		// Update Current Selected Actor
 		if (SelectedActor != CurrentSelectedActor)
@@ -60,21 +63,41 @@ void UActorTerminationWidget::Update()
 void UActorTerminationWidget::RenderWidget()
 {
 	auto& InputManager = UInputManager::GetInstance();
-
-	if (SelectedActor)
+	SelectedActor = SelectionManager->GetSelectedActor();
+	SelectedComponent = SelectionManager->GetSelectedComponent();
+	if (ImGui::Button("Delete Selected") || InputManager.IsKeyPressed(VK_DELETE))
 	{
-		// 캐시된 이름 사용하여 안전하게 출력
-		ImGui::TextColored(ImVec4(1.0f, 0.6f, 0.6f, 1.0f), "Selected: %s (%p)",
-		                   CachedActorName.c_str(), SelectedActor);
-
-		if (ImGui::Button("Delete Selected") || InputManager.IsKeyPressed(VK_DELETE))
+		if (SelectedActor != nullptr)
 		{
-			DeleteSelectedActor();
+			if (SelectedComponent != nullptr)
+			{
+				DeleteSelectedComponent();
+			}
+			else 
+			{
+				DeleteSelectedActor();
+			}
 		}
 	}
-	else
+	
+	ImGui::SameLine();
+	if (ImGui::Button("Add MeshComponent"))
 	{
-		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "No Actor Selected For Deletion");
+		if (SelectedActor != nullptr)
+		{
+			if (SelectedComponent != nullptr)
+			{
+				//해당 로직을 둘 곳을 몰라서 일단 여기둠
+				UStaticMeshComponent* StaticComponent = NewObject<UStaticMeshComponent>();
+				SelectedActor->AddComponent(StaticComponent);
+			}
+			else
+			{
+				//해당 로직을 둘 곳을 몰라서 일단 여기둠
+				UStaticMeshComponent* StaticComponent = NewObject<UStaticMeshComponent>();
+				SelectedActor->AddComponent(StaticComponent);
+			}
+		}
 	}
 
 	ImGui::Separator();
@@ -85,57 +108,20 @@ void UActorTerminationWidget::RenderWidget()
  */
 void UActorTerminationWidget::DeleteSelectedActor()
 {
-	if (!SelectedActor)
-	{
-		UE_LOG("ActorTerminationWidget: No Actor Selected For Deletion");
-		return;
-	}
-
-	if (!UIManager)
-	{
-		UE_LOG("ActorTerminationWidget: UIManager not available");
-		return;
-	}
-
-	// UIManager를 통해 World에 접근
-	UWorld* World = UIManager->GetWorld();
-	if (!World)
-	{
-		UE_LOG("ActorTerminationWidget: No World available for deletion");
-		return;
-	}
-
-	// 안전한 로깅을 위해 캐시된 이름 사용
-	UE_LOG("ActorTerminationWidget: Deleting Selected Actor: %s (%p)",
-	       CachedActorName.empty() ? "UnNamed" : CachedActorName.c_str(),
-	       SelectedActor);
-
-	// 삭제 전에 로컬 변수에 저장
-	AActor* ActorToDelete = SelectedActor;
-	
-	// 즉시 UI 상태 정리
-	SelectedActor = nullptr;
-	CachedActorName = "";
-
-	// Transform 위젯의 선택도 해제
-	UIManager->ClearTransformWidgetSelection();
-
+	AActor* DeleteActor = SelectionManager->GetSelectedActor();
 	// 기즈모가 이 액터를 타겟으로 잡고 있다면 해제
 	if (AGizmoActor* Gizmo = UIManager->GetGizmoActor())
 	{
-		if (Gizmo->GetTargetActor() == ActorToDelete)
+		if (Gizmo->GetTargetActor() == DeleteActor)
 		{
 			Gizmo->SetTargetActor(nullptr);
 		}
 	}
 
-	// World를 통해 액터 삭제
-	if (World->DestroyActor(ActorToDelete))
-	{
-		UE_LOG("ActorTerminationWidget: Actor successfully deleted");
-	}
-	else
-	{
-		UE_LOG("ActorTerminationWidget: Failed to delete actor");
-	}
+	UWorld* World = UIManager->GetWorld();
+	World->DestroyActor(DeleteActor);
+}
+void UActorTerminationWidget::DeleteSelectedComponent()
+{
+	
 }

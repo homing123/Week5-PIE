@@ -2,7 +2,7 @@
 #include "LineComponent.h"
 #include "Renderer.h"
 
-void ULineComponent::GetWorldLineData(TArray<FVector>& OutStartPoints, TArray<FVector>& OutEndPoints, TArray<FVector4>& OutColors) const
+void ULineComponent::GetWorldLineData(TArray<FVector>& OutStartPoints, TArray<FVector>& OutEndPoints, TArray<FVector4>& OutColors)
 {
     if (!bLinesVisible || Lines.empty())
     {
@@ -12,7 +12,7 @@ void ULineComponent::GetWorldLineData(TArray<FVector>& OutStartPoints, TArray<FV
         return;
     }
     
-    FMatrix worldMatrix = GetWorldMatrix();
+    const FMatrix& worldMatrix = GetWorldMatrix();
     size_t lineCount = Lines.size();
     
     for (const ULine* Line : Lines)

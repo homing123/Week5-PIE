@@ -39,16 +39,16 @@ void UOBoundingBoxComponent::SetFromVertices(const std::vector<FVector>& Verts)
     //SetMeshResource(MeshName);
 }
 
-FBox UOBoundingBoxComponent::GetWorldBox() const
+FBox UOBoundingBoxComponent::GetWorldBox()
 {
     auto corners = GetLocalCorners();
-
-    FVector MinW = GetWorldTransform().TransformPosition(corners[0]);
+    const FMatrix& WorldMatrix = GetWorldMatrix();
+    FVector MinW = corners[0] * WorldMatrix;
     FVector MaxW = MinW;
 
     for (auto& c : corners)
     {
-        FVector wc = GetWorldTransform().TransformPosition(c);
+        FVector wc = c * WorldMatrix;
         MinW = MinW.ComponentMin(wc);
         MaxW = MaxW.ComponentMax(wc);
     }//MinW, MaxW
@@ -84,12 +84,13 @@ FBox UOBoundingBoxComponent::GetWorldOBBFromAttachParent() const
     auto corners = GetLocalCorners();
 
     // 월드 변환된 첫 번째 점으로 초기화
-    FVector MinW = AttachParent->GetWorldTransform().TransformPosition(corners[0]);
+    const FMatrix& WorldMatrix = AttachParent->GetWorldMatrix();
+    FVector MinW = corners[0] * WorldMatrix;
     FVector MaxW = MinW;
 
     for (auto& c : corners)
     {
-        FVector wc = AttachParent->GetWorldTransform().TransformPosition(c);
+        FVector wc = c * WorldMatrix;
         MinW = MinW.ComponentMin(wc);
         MaxW = MaxW.ComponentMax(wc);
     }

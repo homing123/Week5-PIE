@@ -123,5 +123,5 @@ public:
 
 private:
     /** === 내부 헬퍼 함수들 === */
-    static bool CheckGizmoComponentPicking(const UStaticMeshComponent* Component, const FRay& Ray, float& OutDistance);
+    static bool CheckGizmoComponentPicking(UStaticMeshComponent* Component, const FRay& Ray, float& OutDistance);
 };

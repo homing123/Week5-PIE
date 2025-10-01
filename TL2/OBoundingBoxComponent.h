@@ -21,7 +21,7 @@ public:
     void SetFromVertices(const std::vector<FVector>& Verts);
 
     // 월드 좌표계에서의 AABB 반환
-    FBox GetWorldBox() const;
+    FBox GetWorldBox();
 
     // 로컬 공간에서의 Extent (절반 크기)
     FVector GetExtent() const;
