@@ -198,14 +198,16 @@ void FViewportClient::MouseButtonDown(FViewport* Viewport, int32 X, int32 Y, int
         }
         PickedActor = CPickingSystem::PerformViewportPicking(AllActors, Camera, ViewportMousePos, ViewportSize, ViewportOffset, PickingAspectRatio,  Viewport);
 
-
         if (PickedActor)
         {
-            USelectionManager::GetInstance().SelectActor(PickedActor);
-            if (World->GetGizmoActor())
+            if (PickedActor != USelectionManager::GetInstance().GetSelectedActor())
             {
-                World->GetGizmoActor()->SetTargetActor(PickedActor);
-                World->GetGizmoActor()->SetActorLocation(PickedActor->GetActorLocation());
+                USelectionManager::GetInstance().SelectActor(PickedActor);
+                if (World->GetGizmoActor())
+                {
+                    World->GetGizmoActor()->SetTargetComponent(PickedActor->GetRootComponent());
+                    World->GetGizmoActor()->SetActorLocation(PickedActor->GetActorLocation());
+                }
             }
         }
         else
@@ -213,6 +215,7 @@ void FViewportClient::MouseButtonDown(FViewport* Viewport, int32 X, int32 Y, int
             // Clear selection if nothing was picked
             USelectionManager::GetInstance().ClearSelection();
         }
+        
     }
     else if (Button==1){//우클릭시 
         bIsMouseRightButtonDown = true;

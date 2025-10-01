@@ -28,6 +28,8 @@ public:
     /** === 선택된 액터 접근 === */
     AActor* GetSelectedActor() const { return SelectedActor; }
     USceneComponent* GetSelectedComponent() const { return SelectedComponent; }
+    //액터선택 = 루트컴포넌트 리턴, 컴포넌트 선택 = 컴포넌트 리턴
+    USceneComponent* GetSelectedOnlyComponent() const;
     
     bool HasSelection() const { return SelectedActor != nullptr; }
 

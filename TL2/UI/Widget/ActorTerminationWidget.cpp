@@ -112,9 +112,9 @@ void UActorTerminationWidget::DeleteSelectedActor()
 	// 기즈모가 이 액터를 타겟으로 잡고 있다면 해제
 	if (AGizmoActor* Gizmo = UIManager->GetGizmoActor())
 	{
-		if (Gizmo->GetTargetActor() == DeleteActor)
+		if (Gizmo->GetTargetActor()->GetOwner() == DeleteActor)
 		{
-			Gizmo->SetTargetActor(nullptr);
+			Gizmo->SetTargetComponent(nullptr);
 		}
 	}
 

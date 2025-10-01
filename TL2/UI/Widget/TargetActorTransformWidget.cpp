@@ -123,7 +123,7 @@ void UTargetActorTransformWidget::RenderWidget()
 
 	SelectedActor = USelectionManager::GetInstance().GetSelectedActor();
 	SelectedComponent = USelectionManager::GetInstance().GetSelectedComponent();
-	
+
 	// 기즈모 스페이스 모드 선택
 	if (GizmoActor)
 	{
@@ -134,7 +134,7 @@ void UTargetActorTransformWidget::RenderWidget()
 		{
 			CurrentGizmoSpace = static_cast<EGizmoSpace>(currentSpaceIndex);
 			
-			GizmoActor->SetSpaceWorldMatrix(CurrentGizmoSpace, SelectedActor);
+			GizmoActor->SetSpaceWorldMatrix(CurrentGizmoSpace, USelectionManager::GetInstance().GetSelectedOnlyComponent());
 		}
 		ImGui::Separator();
 	}
